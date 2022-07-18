@@ -905,7 +905,7 @@ console.log("1" !== 1);
 
 #### if 文
 
-if 文を使うことで、プログラム内に条件分岐を書けます。if 文は次のような構文が基本形となります。 条件式の評価結果が `true` であるならば、実行する文が実行されます。
+[if 文]("https://jsprimer.net/basic/condition/#if-statement")を使うことで、プログラム内に条件分岐を書けます。if 文は次のような構文が基本形となります。 条件式の評価結果が `true` であるならば、実行する文が実行されます。
 
 ```ts
 if (条件式) {
@@ -1243,14 +1243,137 @@ return (
 
 ### 実装手順
 
-1. 更新する関数を作り、Prop として Todo コンポーネントにわたす
+1. 反映する関数を作り、Prop として Todo コンポーネントにわたす
+   まず、 Home コンポーネント内に `edit` を作ります。
+
+```diff
+const clear = () => {
+  // 省略
+};
+
++ const edit = (id: number) => (name: string) => {
++   const newState = todoList.map((todo) => {
++     if (todo.id !== id) return todo;
++     return { ...todo, name: name };
++   });
++
++   setTodoList(newState);
++ };
+```
+
+`edit` を Todo コンポーネントに渡せるように、インターフェイスを変更します。
+
+```diff
+interface Props {
+  todo: Todo
+  onToggle: () => void
+  onRemove: () => void
++  onEdit: (name: string) => void
+}
+
+- const Todo = ({ todo, onToggle, onRemove }: Props) => {
++ const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
+```
+
+`edit` を Todo の `onEdit` に渡します。
+
+```diff
+<Todo
+  key={todo.id}
+  todo={todo}
+  onRemove={() => remove(todo.id)}
+  onToggle={() => toggle(todo.id)}
++  onEdit={edit(todo.id)}
+/>
+```
+
 2. 入力内容が Todo に反映されるようにする
+
+```diff
+const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
+  const [isEditing, setIsEditing] = useState(false)
+
++  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
++    onEdit(e.target.value)
++  }
+```
+
+```diff
+<li>
+  <input
++    onChange={handleChangeInput}
+    defaultValue={todo.name}
+    className="border"
+  />
+  <button onClick={finishEditing}>編集終了</button>
+</li>
+```
 
 ### 解説
 
-#### 引数のカリイカ
+#### カリー化
 
-### まとめ
+[カリー化]("https://kazchimo.com/2021/03/29/monkey_curry/")とは、複数の引数を分割する方法です。２つの数の和を出す関数を考えます。まず、カリー化せずに書きます。
+
+```ts
+const add = (x, y) => x + y;
+add(1, 2);
+// ⇛ 3
+add(1, 3);
+// ⇛ 4
+```
+
+カリー化すると、以下のようになります。
+
+```ts
+const add = (x) => (y) => x + y;
+const add1 = add(1);
+add1(2);
+// ⇛ 3
+add1(3);
+// ⇛ 4
+```
+
+今回の実装を確認します。
+
+```ts
+const edit = (id: number) => (name: string) => {
+  // 省略
+};
+```
+
+```ts
+{
+  todoList.map((todo) => (
+    <Todo
+      key={todo.id}
+      todo={todo}
+      onRemove={() => remove(todo.id)}
+      onToggle={() => toggle(todo.id)}
+      onEdit={edit(todo.id)}
+    />
+  ));
+}
+```
+
+`edit` は 1 つ目の引数が入った状態で、`onEdit` に渡されています。つまり、`onEdit` に渡される関数は以下のようになります。
+
+```ts
+const passedFunction = (name: string) => {
+  const newState = todoList.map((todo) => {
+    if (todo.id !== id) return todo;
+    return { ...todo, name: text };
+  });
+
+  setTodoList(newState);
+};
+```
+
+Todo コンポーネントのインターフェイスから、onEdit の型を確認します。「引数に string を受け取り void を返す関数」と定義されていますね。
+
+```ts
+onEdit: (name: string) => void
+```
 
 ## 参考文献
 
@@ -1263,19 +1386,11 @@ return (
 - [any 型で諦めない React.EventCallback - Qiita]("https://qiita.com/Takepepe/items/f1ba99a7ca7e66290f24")
 - [変数と宣言 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/variables/")
 - [Array.prototype.filter() - JavaScript | MDN]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter")
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
-
-```
+- [<input type="checkbox"> - HTML: HyperText Markup Language | MDN]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox")
+- [論理否定 (!) - JavaScript | MDN]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Logical_NOT")
+- [厳密不等価 (!==) - JavaScript | MDN]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Strict_inequality")
+- [条件分岐 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/condition")
+- [Your First Component]("https://beta.reactjs.org/learn/your-first-component")
+- [関数とスコープ · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/function-scope")
+- [Passing Props to a Component]("https://beta.reactjs.org/learn/passing-props-to-a-component")
+- [サルでもわかるカリー化とそのメリット - These Walls]("https://kazchimo.com/2021/03/29/monkey_curry/")
