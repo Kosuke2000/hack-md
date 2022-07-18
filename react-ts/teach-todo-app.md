@@ -1,7 +1,8 @@
----
-title: Todoリストを作る
-description: React TypeScriptを習得するためのノート
+\*\*\*\*---
+title: Todo リストを作る
+description: React TypeScript を習得するためのノート
 image: https://i.imgur.com/Ml6wuFm.png
+
 ---
 
 # Todo リストを作る
@@ -718,7 +719,7 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 {todoList.map((todo) => (
   <li key={todo.id} className="flex gap-2">
     <p>{todo.name}</p>
-+    <button onClick={() => remove(todo.id)}>削除</button>
++    <button>削除</button>
   </li>
 ))}
 </ul>
@@ -735,6 +736,11 @@ const register = () => {
 +     const newState = todoList.filter((todo) => todo.id !== id)
 +     setTodoList(newState)
 +   }
+```
+
+```diff
+-    <button>削除</button>
++    <button onClick={() => remove(todo.id)}>削除</button>
 ```
 
 ### 解説
@@ -807,7 +813,364 @@ const remove = (id: number) => {
 1. 削除ボタンが押され、その `onClick`に渡されている `remove` が実行される
 2. `todoList` から、削除したい Todo が削除される
 
-## Section
+## Todo 完了ボタンを作る
+
+このセクションでは、Todo を完了にする機能を実装します。
+
+### 実装手順
+
+1. 完了チェックボックスの用意
+
+```diff
+<li
+  key={todo.id}
++  style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+  className="flex gap-4 p-4"
+>
++  <input
++    type="checkbox"
++    checked={todo.isDone}
++  />
+  <p>{todo.name}</p>
+  <button onClick={() => remove(todo.id)}>削除</button>
+</li>
+```
+
+2. toggle 関数の作成
+
+```diff
+const remove = (id: number) => {
+  // 省略
+};
+
++ const toggle = (id: number) => {
++   const newState = todoList.map((todo) => {
++     if (todo.id !== id) return todo;
++     return { ...todo, isDone: !todo.isDone };
++   });
++
++   setTodoList(newState);
++ };
+```
+
+```diff
+  <input
+    type="checkbox"
+    checked={todo.isDone}
++    onChange={() => toggle(todo.id)}
+  />
+```
+
+### 解説
+
+#### <input type="checkbox">
+
+[`<input type=“checkbox”>`]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox")でチェックボックスが作れます。checked 属性を使うことで、チェックボックスの挙動をコントロールできます。
+今回の実装を確認します。 `isDone` は Boolean 型でした。`isDone` が `true` ならチェックが入り、`false` なら空欄になります。
+
+```ts
+<input type="checkbox" checked={todo.isDone} onChange={() => toggle(todo.id)} />
+```
+
+mock0 の `isDone` を `false` から `true` に変えて、ローカルホストを確認してみましょう。
+
+```diff
+const mock0: Todo = {
+  id: 0,
+  name: "髪を切りに行く",
+-  isDone: false,
++  isDone: true,
+};
+```
+
+#### 論理否定 (!)
+
+[論理否定 (!)]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Logical_NOT") 演算子 (論理反転、否定) は、真値を取ると偽値になり、偽値になると真値になります。
+今回の実装を確認します。todo.isDone が true のとき isDone は false になり、todo.isDone が false のとき isDone は true になります。
+
+```ts
+isDone: !todo.isDone;
+```
+
+#### 厳密不等価 (!==)
+
+[厳密不等価演算子 (!==)]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Strict_inequality") は、2 つのオペランド（被演算子）が等しくないことを検査し、`true` か `false` で結果を返します。
+
+```ts
+console.log(1 !== 1);
+// expected output: false
+console.log("1" !== 1);
+// expected output: true
+```
+
+#### if 文
+
+if 文を使うことで、プログラム内に条件分岐を書けます。if 文は次のような構文が基本形となります。 条件式の評価結果が `true` であるならば、実行する文が実行されます。
+
+```ts
+if (条件式) {
+  実行する文;
+}
+```
+
+今回の実装を確認します。`togggle` の引数と `todo.id` が異なる場合は、`todo` がそのまま返されます。逆に、`togggle` の引数と `todo.id` が同じだった場合は、if 文に続く処理 `return { ...todo, isDone: !todo.isDone }` に移動します。
+
+```ts
+const toggle = (id: number) => {
+  const newState = todoList.map((todo) => {
+    if (todo.id !== id) {
+      return todo;
+    }
+    return { ...todo, isDone: !todo.isDone };
+  });
+
+  setTodoList(newState);
+};
+```
+
+上記で書かれたコードは、以下のようにリファクタリングできます。
+
+```ts
+const toggle = (id: number) => {
+  const newState = todoList.map((todo) => {
+    if (todo.id !== id) return todo;
+
+    return { ...todo, isDone: !todo.isDone };
+  });
+
+  setTodoList(newState);
+};
+```
+
+### まとめ
+
+1. 完了した Todo にチェックが入れられる
+2. その Todo の `isDone` が `true` になる
+
+## 完了した Todo を一掃するボタンを作る
+
+このセクションでは、完了した Todo を一掃する機能を実装します。
+
+### 実装手順
+
+1. クリアボタンの作成
+
+```diff
+  <button onClick={register}>登録</button>
++ <button>完了したタスクを一掃</button>
+</main>
+```
+
+2. clear 関数の作成
+
+```diff
+const toggle = () => {
+  // 省略
+};
+
++ const clear = () => {
++   const newState = todoList.filter((todo) => !todo.isDone);
++   setTodoList(newState);
++ };
+```
+
+```diff
+- <button>完了したタスクを一掃</button>
++ <button onClick={clear}>完了したタスクを一掃</button>
+```
+
+## Todo コンポーネントの作成
+
+このセクションでは、Todo コンポーネントを作成します。
+
+### 実装手順
+
+1. Todo コンポーネントを作成する
+   まず、Home コンポーネントの上に、Todo コンポーネントを作ります。
+
+```diff
++ const Todo = () => {
++   return (
++   );
++ };
+
+const Home: NextPage = () => {
+```
+
+次に、Home コンポーネントの以下の箇所を切り取ります。
+
+```diff
+<ul>
+  {todoList.map((todo) => (
+-    <li
+-      key={todo.id}
+-      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+-      className="flex gap-4 p-4"
+-    >
+-      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
+-      <p>{todo.name}</p>
+-      <button onClick={remove(todo.id)}>削除</button>
+-    </li>
+  ))}
+</ul>
+```
+
+切り取った部分を、Todo コンポーネントに貼り付けます。
+
+```diff
+const Todo = () => {
+  return (
++    <li
++      key={todo.id}
++      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
++      className="flex gap-4 p-4"
++    >
++      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
++      <p>{todo.name}</p>
++      <button onClick={remove(todo.id)}>削除</button>
++    </li>
+  );
+};
+```
+
+`todo` `remove` `toggle` の部分にでエラーが出ていたら正解です。
+
+エラーが出ているのは、Todo コンポーネントの中で`todo` `remove` `toggle`を呼び出しても、Todo コンポーネント内にこれらに対応するものがないからです。今から、親コンポーネント（Home）から子コンポーネント（Todo）へ、`todo` `remove` `toggle` が渡せるようにします。（詳しくは解説で）
+
+2. Todo コンポーネントのインターフェイスを作る
+   TodoProps という名前のインターフェイスを作ります。
+
+```diff
++ interface TodoProps {
++  todo: Todo;
++  onToggle: () => void;
++  onRemove: () => void;
++ }
+
+const Todo = () => {
+```
+
+次に、以下のように修正してください。
+
+```diff
+- const Todo = () => {
++ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+```
+
+`return` の中も、以下のように修正してください。先程までのエラーが消えるはずです。
+
+```diff
+return (
+    <li
+      key={todo.id}
+      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+      className="flex gap-4 p-4"
+    >
+-      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
++      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+      <p>{todo.name}</p>
+-      <button onClick={remove(todo.id)}>削除</button>
++      <button onClick={onRemove}>削除</button>
+    </li>
+  );
+```
+
+5. Home コンポーネントの中で Todo コンポーネントを呼び出す
+   ローカルホストで挙動を確認して下しさい。
+
+```diff
+<ul>
+  {todoList.map((todo) => (
++    <Todo
++      key={todo.id}
++      todo={todo}
++      onRemove={() => remove(todo.id)}
++      onToggle={() => toggle(todo.id)}
++    />
+  ))}
+</ul>
+```
+
+### 解説
+
+#### コンポーネント
+
+[コンポーネント]("https://beta.reactjs.org/learn/your-first-component#defining-a-component")は、特別な JavaScript の関数です。特別な点は 2 つです。
+
+1. 関数名が大文字から始まる
+2. JSX を返す
+
+```ts
+const 大文字で始める関数名 = (引数) => {
+
+  return (
+    <p>JSXを返す</p>;
+  )
+};
+```
+
+#### 関数のスコープ
+
+[スコープ]("https://jsprimer.net/basic/function-scope/#what-is-scope")とは、変数の名前や関数などの参照できる範囲を決めるものです。 スコープの中で定義された変数はスコープの内側でのみ参照でき、スコープの外側からは参照できません。例えば、関数の中で定義された変数は、その関数の中でしか参照することしかできないことになっています。
+今回の実装を振り返ります。実装手順 1 の終わりでエラーが出ていたのは、Home コンポーネントの変数がスコープ外である Todo コンポーネントから呼び出されていたからです。コンポーネントは関数でしたね。
+（写真）
+
+#### 親コンポーネントから子コンポーネントに Props を渡す
+
+[コンポーネントは親から子へ Props として変数や関数、JSX などあらゆる情報をわたすことができます。]("https://beta.reactjs.org/learn/passing-props-to-a-component")今回の実装を確認します。Home コンポーネントから Todo コンポーネントを呼び出しました。このとき、Home コンポーネントが親、Todo コンポーネントが子になります。
+
+```ts
+<ul>
+  {todoList.map((todo) => (
+    <Todo
+      key={todo.id}
+      todo={todo}
+      onRemove={() => remove(todo.id)}
+      onToggle={() => toggle(todo.id)}
+    />
+  ))}
+</ul>
+```
+
+Props は、`todo` や `onRemove`、`onToggle`になります。例えば、 Home コンポーネントから Todo コンポーネントの `onRemove` に渡された `() => remove(todo.id)` は、Todo コンポーネントの中で`onRemove`として呼び出すことが可能になります。
+
+Todo コンポーネントを確認します。削除ボタンの `onClick` に `onRemove` が渡されていますね。
+
+```ts
+const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+  return (
+    <li
+      key={todo.id}
+      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+      className="flex gap-4 p-4"
+    >
+      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+      <p>{todo.name}</p>
+      <button onClick={onRemove}>削除</button>
+    </li>
+  );
+};
+```
+
+#### インターフェイス
+
+インターフェイスとは、Props の型の集合です。インターフェイスを定義することで、子コンポーネントが親から受け取る Props の型を定義できます。実装を確認します。`TodoProps` は、「`todo` は Todo」「`onToggle` は引数無しで void を返す関数」「`onRemove` は 引数無しで void を返す関数」という Props の型定義の集合です。
+
+```ts
+interface TodoProps {
+  todo: Todo;
+  onToggle: () => void;
+  onRemove: () => void;
+}
+
+const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+  return (
+    // 省略
+  );
+};
+```
+
+## Todo を編集モードに切り替えられるようにする
 
 ### 実装手順
 
@@ -822,22 +1185,7 @@ const remove = (id: number) => {
 
 ### まとめ
 
-## Section
-
-### 実装手順
-
-1. 行頭が `+` のコードを `Home` コンポーネントに追加してください
-2.
-
-### 解説
-
-#### 解説項目
-
-[解説項目](https://hoge)とは、...。
-
-### まとめ
-
-## Section
+## Todo を編集できるようにする
 
 ### 実装手順
 
@@ -863,6 +1211,14 @@ const remove = (id: number) => {
 - [any 型で諦めない React.EventCallback - Qiita]("https://qiita.com/Takepepe/items/f1ba99a7ca7e66290f24")
 - [変数と宣言 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/variables/")
 - [Array.prototype.filter() - JavaScript | MDN]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter")
+
+```
+
+```
+
+```
+
+```
 
 ```
 
