@@ -42,7 +42,8 @@ React + TypeScript で、Todo リストを作ります。
 
 ## 完成図
 
-<video src="https://drive.google.com/uc?id=1cn9As-pb9ZlAZzVYqb7X0RUArR9zff8x" type="video/mp4" autoplay controls loop playsinline  width="480"></video>
+<video src="https://drive.google.com/uc?id=1WcqTK72iIcgDrA8daXaKIoBNP_Kd8qwg" type="video/mp4" autoplay controls loop playsinline  width="640"></video>
+
 
 ## リポジトリを用意する
 
@@ -61,51 +62,51 @@ React + TypeScript で、Todo リストを作ります。
 1. Todo モデルの作成
    行頭 `+` で始まるコードを追加してください。
 
-<span class="code-filename">pages/index.tsx</span>
+    <span class="code-filename">pages/index.tsx</span>
+    
+    ```diff
+    import Head from "next/head";
+    import type { NextPage } from "next";
 
-```diff
-import Head from "next/head";
-import type { NextPage } from "next";
+    + type Todo = {
+    +   id: number
+    +   name: string
+    +   isDone: boolean
+    + }
 
-+ type Todo = {
-+   id: number
-+   name: string
-+   isDone: boolean
-+ }
-
-const Home: NextPage = () => {
-```
+    const Home: NextPage = () => {
+    ```
 
 1. モックデータ（ダミーデータ）の作成
    コードを追加してください。
+    <span class="code-filename">pages/index.tsx</span>
+    ```diff
+    export type Todo = {
+     id: number
+     name: string
+     isDone: boolean
+    }
 
-```diff
-export type Todo = {
- id: number
- name: string
- isDone: boolean
-}
+    + const mockTodo0: Todo = {
+    +   id: 0,
+    +   name: "髪を切りに行く",
+    +   isDone: false,
+    + }
+    + const mockTodo1: Todo = {
+    +   id: 1,
+    +   name: "プレゼントを選ぶ",
+    +   isDone: false,
+    + }
+    + const mockTodo2: Todo = {
+    +   id: 2,
+    +   name: "映画館デートする",
+    +   isDone: false,
+    + }
 
-+ const mockTodo0: Todo = {
-+   id: 0,
-+   name: "髪を切りに行く",
-+   isDone: false,
-+ }
-+ const mockTodo1: Todo = {
-+   id: 1,
-+   name: "プレゼントを選ぶ",
-+   isDone: false,
-+ }
-+ const mockTodo2: Todo = {
-+   id: 2,
-+   name: "映画館デートする",
-+   isDone: false,
-+ }
+    + const mockTodoList = [mockTodo0, mockTodo1, mockTodo2]
 
-+ const mockTodoList = [mockTodo0, mockTodo1, mockTodo2]
-
-const Home: NextPage = () => {
-```
+    const Home: NextPage = () => {
+    ```
 
 ### 解説
 
@@ -116,6 +117,8 @@ const Home: NextPage = () => {
 #### モデルの型定義
 
 TypeScript では、モデルの型定義ができます。今回の実装の以下の箇所で、Todo モデルの型定義が行われています。
+
+<span class="code-filename">pages/index.tsx</span>
 
 ```typescript
 type Todo = {
@@ -139,6 +142,8 @@ const sampleObj = {
 ```
 
 今回の実装だと、モックデータとして mock0、mock1、mock2 の 3 つのオブジェクトを作成しました。
+
+<span class="code-filename">pages/index.tsx</span>
 
 ```typescript
 const mock0: Todo = {
@@ -167,6 +172,8 @@ const mock2: Todo = {
 
 今回の実装から理解できる範囲で説明します。作成したモックデータを見てください。以下の部分は、「`mock0` は Todo の型に従わなければならない」ということを意味しています。このように`mock0`の型を明示したことによって、`mock0`は Todo のモックデータなのだということがひと目で分かるようになっています。（逆に、`: Todo`の記述がなかった場合と比較してみてください。）これが 1 つ目のメリット、コードの可読性が上がると考える理由です。
 
+<span class="code-filename">pages/index.tsx</span>
+
 ```typescript
 const mock0: Todo = {
   // 省略
@@ -175,6 +182,7 @@ const mock0: Todo = {
 
 次に、作成したモックデータを以下のように壊してみます。するとエラー文が出てくるはずです。
 
+<span class="code-filename">pages/index.tsx</span>
 ```diff
 const mock0: Todo = {
   id: 0,
@@ -183,7 +191,7 @@ const mock0: Todo = {
   isDone: false,
 };
 ```
-
+<span class="code-filename">エラー文</span>
 ```
 Type '{ id: number; name: string; place: string; isDone: false; }' is not assignable to type 'Todo'.
 ```
@@ -193,6 +201,8 @@ TypeScript は指定した型を破ると即座にエラーを出してくれま
 #### 配列
 
 [配列]("https://jsprimer.net/basic/array/")とは、値に順序をつけて格納できるオブジェクトです。 配列に格納したそれぞれの値のことを要素、それぞれの要素の位置のことをインデックス（index）と呼びます。 インデックスは先頭の要素から 0、1、2 のように 0 からはじまる連番となります。配列は、`[]`（リテラルノーテーション）を使って作成することができます。今回の実装の `mockTodoList` が配列です。
+
+<span class="code-filename">pages/index.tsx</span>
 
 ```typescript
 const mockTodoList = [mock0, mock1, mock2];
@@ -218,26 +228,29 @@ const mockTodoList: Todo[];
 
 1. ステート todoList を作る
    コードを追加してください。
+   
+    <span class="code-filename">pages/index.tsx</span>
 
-```diff
-export const Home: VFC = () => {
-+  const [todoList, setTodoList] = useState(mockTodoList)
-```
+    ```diff
+    export const Home: VFC = () => {
+    +  const [todoList, setTodoList] = useState(mockTodoList)
+    ```
 
-2.  todoList の中身を表示する
-    コードを追加してください。
+2.  todoList の中身を表示するコードを追加してください。
 
-```diff
-<main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
-+   <ul>
-+     {todoList.map((todo) => (
-+        <li key={todo.id} className="flex gap-2">
-+          {todo.name}
-+        </li>
-+      ))}
-+   </ul>
-</main>
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    <main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
+    +   <ul>
+    +     {todoList.map((todo) => (
+    +        <li key={todo.id} className="flex gap-2">
+    +          {todo.name}
+    +        </li>
+    +      ))}
+    +   </ul>
+    </main>
+    ```
 
 ### 解説
 
@@ -255,7 +268,7 @@ const todoList: Todo[];
 
 オブジェクト内のプロパティの値を取得する方法を学びましょう。例えば、`idInMock0` に `mock0`オブジェクトの `id`の値 0 を代入する場合、以下のようになります。
 
-```ts
+```typescript
 const mock0 = {
   id: 0,
   name: "髪を切りに行く",
@@ -269,7 +282,9 @@ const idInMock0 = mock0.id;
 
 map 関数とは、配列の各要素に対して指定された関数を実行し、その結果から新しい配列を作成する関数です。今回の実装を確認します。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 {
   todoList.map((todo) => <li key={todo.id}>{todo.name}</li>);
 }
@@ -277,7 +292,7 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 
 `todoList` の各要素に対して、`map`関数の引数に渡された関数 `(todo) => <li key={todo.id}>{todo.name}</li>` を実行し、新しい配列を返しています。 `todo` とは、`todoList` の各要素のことだと考えてください。`todoList` が初期値の場合、上記コードの処理結果は以下のようになります。
 
-```ts
+```typescript
 {[
   <li key={mock0.id}>{mock0.name}</li>
   <li key={mock1.id}>{mock1.name}</li>
@@ -289,7 +304,7 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 
 今回の実装で map 関数に渡されていた関数は、複数行の JSX だけを返す関数です。複数行の JSX だけを返す関数は 2 つの書き方があります。今回の実装では、省略形が採用されています。 `=>` に続く括弧が異なっていることに注意してください。
 
-```ts
+```typescript
 const function0 = (todo) => {
   return (
     <li key={todo.id} className="flex gap-2">
@@ -313,9 +328,7 @@ const function1 = (todo) => (
 
 ## Todo アプリの全体像を理解する
 
-### 解説
-
-#### Todo アプリの仕様
+### Todo アプリの仕様
 
 今回の Todo アプリには以下の 6 つの機能を実装します。「Todo を表示する」は、前のセクションで実装済みです。
 
@@ -326,31 +339,31 @@ const function1 = (todo) => (
 - Todo のステータスを Done（完了）にする
 - Done になった Todo を削除する
 
-#### ステート todoList の更新
+### ステート todoList の更新
 
 上記 6 つの機能を、`todoList` を使って実装します。ここでは、どのような実装になるかの概要を見ていきます。
 
-##### Todo を表示
+#### Todo を表示
 
 配列 `todoList` 内の要素を表示する。
 
-##### 新しい Todo を作成
+#### 新しい Todo を作成
 
 配列 `todoList` に、要素を追加する。追加される要素は、Todo モデルの型に従っている。
 
-##### Todo の削除
+#### Todo の削除
 
 配列 `todoList` から、任意の `id` を持った要素を削除する。
 
-##### 既存の Todo の編集
+#### 既存の Todo の編集
 
 配列 `todoList` 内の任意の `id` を持った要素の `name` を変更する。
 
-##### Todo のステータスを Done（完了）にする
+#### Todo のステータスを Done（完了）にする
 
 配列 `todoList` 内の任意の `id` を持った要素の `isDone` を `false` から　`true` に変更する。
 
-##### Done になった Todo を削除する
+#### Done になった Todo を削除する
 
 配列 `todoList` から、 `isDone` が　`true` の要素を削除する。
 
@@ -362,21 +375,25 @@ const function1 = (todo) => (
 
 1. 入力フォームの追加
 
-```diff
-<main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
-  <ul>
-    {todoList.map((todo) => (
-      <li key={todo.id} className="flex gap-2">
-        {todo.name}
-      </li>
-    ))}
-  </ul>
-+  <input type="text" className="border"/>
-</main>
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    <main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
+      <ul>
+        {todoList.map((todo) => (
+          <li key={todo.id} className="flex gap-2">
+            {todo.name}
+          </li>
+        ))}
+      </ul>
+    +  <input type="text" className="border"/>
+    </main>
+    ```
 
 2. フォームにされた内容をステート text で管理する
 
+    <span class="code-filename">pages/index.tsx</span>
+    
    ```diff
    const Home: NextPage = () => {
      const [todoList, setTodoList] = useState(mockTodoList)
@@ -388,7 +405,8 @@ const function1 = (todo) => (
    ```
 
    先程、作成したフォームを以下のように修正してください。
-
+    
+    <span class="code-filename">pages/index.tsx</span>
    ```diff
    -  <input type="text" />
    +   <input
@@ -405,21 +423,21 @@ const function1 = (todo) => (
 
 [こちらの記事]("https://upmostly.com/tutorials/react-onchange-events-with-examples#:~:text=An%20onChange%20event%20handler%20returns,target.")を参考に解説します。
 
-###### `input` の `value`
+#### `input` の `value`
 
 `input` は、`value` を持っています。フォームに入力された内容は `value` に保存されます。
 
-##### イベント
+#### イベント
 
 [イベント]("https://developer.mozilla.org/ja/docs/Learn/JavaScript/Building_blocks/Events")とは、アプリ内のユーザーの動作、出来事を指します。必要であれば、イベントに対して、何らかの反応を返す事ができます。その際用いるのがイベントプロパティです。イベントプロパティはいろいろあります。 例えば `onClick` は「ユーザーがボタンをクリックしたとき」に何らかの処理を実行します。
 
-```ts
+```typescript
 <button onClick={＜クリックされたときに行う処理＞}>ボタン</button>
 ```
 
 また、イベントプロパティには型があります。TypeScript では、以下のように表現されます。使い方は後述します。
 
-```ts
+```typescript
 // イベントプロパティ: イベントプロパティの型
 type Props = {
   onClick: (event: React.MouseEvent<HTMLInputElement>) => void;
@@ -428,13 +446,14 @@ type Props = {
 };
 ```
 
-##### `onChage`
+#### `onChage`
 
 `onChage` はイベントプロパティの一つです。今回の実装では、「ユーザーがフォームに入力するとき」、つまり`input` の `value` に変更が起こったときに、onChange に渡された関数が実行されます。このとき実行される関数の引数には、[イベントオブジェクト]("https://uhyohyo.net/javascript/3_5.html")が渡されます。イベントオブジェクトから、イベントの様々な情報を得ることができます。
 
 具体例を見ます。下のコードをコンポーネントの `return` 以下に追加してください。ローカルホストで開発者ツールの Console を開き、作成したフォームに入力します。Console に入力中の内容が表示されるはずです。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+```typescript
 <input
   className="border-2 border-red-500"
   onChange={(e) => console.log(e.target.value)}
@@ -450,9 +469,11 @@ type Props = {
 
 今回の実装だと、onChange から渡されるイベントオブジェクトは `e`と呼ばれています。 `e.target.value` で フォームに入力された内容、つまり`input` の `value`を取得することができます。
 
-##### フォームの入力内容をステートとして管理する
+#### フォームの入力内容をステートとして管理する
 
 Home コンポーネント内の`return`より上の箇所で、以下のコードを追加してください。
+
+<span class="code-filename">pages/index.tsx</span>
 
 ```diff
 const Home: NextPage = () => {
@@ -465,6 +486,7 @@ const Home: NextPage = () => {
 
 先程のコードを以下のように変更します。
 
+<span class="code-filename">pages/index.tsx</span>
 ```diff
 <input
 +  value={demo}
@@ -485,7 +507,8 @@ const Home: NextPage = () => {
 
 今回の実装を観察します。先程までの解説とほとんど同じですが、`onChange` に直接関数を書いて渡すのではなく、`handleChangeInput`という関数名を渡しています。`onChange` に渡される引数の型が `e: React.ChangeEvent<HTMLInputElement>` と指定されているところも確認してください。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+```typescript
 const [text, setText] = useState("");
 const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
   setText(e.target.value);
@@ -495,7 +518,8 @@ const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
 ```
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+```typescript
 <input
   type="text"
   value={text}
@@ -506,6 +530,8 @@ type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
 
 最後に、デモで使用したコードを次に進んでください。
 
+<span class="code-filename">pages/index.tsx</span>
+
 ```diff
 const Home: NextPage = () => {
   const [todoList, setTodoList] = useState(mockTodoList)
@@ -515,6 +541,7 @@ const Home: NextPage = () => {
 - console.log(demo)
 ```
 
+<span class="code-filename">pages/index.tsx</span>
 ```diff
 - <input
 -   value={demo}
@@ -532,23 +559,26 @@ const Home: NextPage = () => {
 
 1. 登録ボタンの追加
 
-```diff
-  <input type="text" className="border"/>
-+  <button>Todoに登録</button>
+    <span class="code-filename">pages/index.tsx</span>
+    ```diff
+      <input type="text" className="border"/>
+    +  <button>Todoに登録</button>
 
-</main>
-```
+    </main>
+    ```
 
 2. ファイル末尾に以下のコードを追加してください
 
+    <span class="code-filename">pages/index.tsx</span>
    ```diff
    + let nextId = 3
 
-   export default Home
+   const Home: NextPage = () => {
    ```
 
 3. 入力内容を Todo に登録する
 
+    <span class="code-filename">pages/index.tsx</span>
    ```diff
    const Home: NextPage = () => {
      const [todoList, setTodoList] = useState<Todo[]>(mockTodoList)
@@ -573,6 +603,7 @@ const Home: NextPage = () => {
 
    先程作成したボタンを以下のように修正してください。
 
+    <span class="code-filename">pages/index.tsx</span>
    ```diff
    - <button>Todoに登録</button>
    + <button onClick={() => register(text)}>Todoに登録</button>
@@ -584,13 +615,13 @@ const Home: NextPage = () => {
 
 [`const`]("https://jsprimer.net/basic/variables/#const")とは、再代入できない変数の宣言とその変数が参照する値（初期値）を定義できます。
 
-```ts
+```typescript
 const 変数名 = 初期値;
 ```
 
 再代入しようとするとエラーがでます。
 
-```ts
+```typescript
 const name = "Kosuke";
 name = "Takashi"; // => エラー：Cannot assign to 'name' because it is a constant.
 ```
@@ -599,14 +630,14 @@ name = "Takashi"; // => エラー：Cannot assign to 'name' because it is a cons
 
 [`let`]("https://jsprimer.net/basic/variables/#let")とは、値の再代入が可能な変数を宣言できます。使い方は `const` とほぼ同じです。
 
-```ts
+```typescript
 let name = "Kosuke";
 name = "Takashi";
 ```
 
 今回の実装では、唯一 `nextID`が`let`で宣言されています。
 
-```ts
+```typescript
 let nextId = 3;
 ```
 
@@ -614,7 +645,7 @@ let nextId = 3;
 
 [インクリメント演算子`++`]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Increment")は、オペランド（被演算子）をインクリメント (1 を加算) して値を返します。
 
-```ts
+```typescript
 let x = 3;
 y = x++;
 
@@ -624,7 +655,9 @@ y = x++;
 
 今回の実装を確認してみましょう。変数`nextID`がインクリメントされています。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const register = () => {
   // 省略
 
@@ -646,7 +679,9 @@ nextId = nextId++;
 - `newTodo`は Todo モデルの型に従っている
 - `name` の値は `text`
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const register = () => {
   const newTodo: Todo = {
     id: nextId,
@@ -661,7 +696,7 @@ const register = () => {
 
 [spread syntax `...`]("https://typescriptbook.jp/reference/values-types-variables/array/spread-syntax-for-array")を使うことで、要素を展開することができます。
 
-```ts
+```typescript
 const arr = [1, 2, 3];
 const arr2 = [...arr, 4];
 
@@ -670,7 +705,9 @@ console.log(arr2); // => expected output is [1, 2, 3, 4]
 
 今回の実装では、 `register` の中で使用されています。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const register = () => {
   const newTodo: Todo = {
     id: nextId,
@@ -686,7 +723,7 @@ const register = () => {
 
 `todoList` が初期値の場合、spread syntax では以下のように展開されます。
 
-```ts
+```typescript
 setTodoList([mock0, mock1, mock2, newTodo]);
 ```
 
@@ -713,34 +750,39 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 
 1. 削除ボタンの作成
 
-```diff
-<ul>
-{todoList.map((todo) => (
-  <li key={todo.id} className="flex gap-2">
-    <p>{todo.name}</p>
-+    <button>削除</button>
-  </li>
-))}
-</ul>
-```
+    <span class="code-filename">pages/index.tsx</span>
+    
+    ```diff
+    <ul>
+    {todoList.map((todo) => (
+      <li key={todo.id} className="flex gap-2">
+        <p>{todo.name}</p>
+    +    <button>削除</button>
+      </li>
+    ))}
+    </ul>
+    ```
 
 2. remove 関数の用意
 
-```diff
-const register = () => {
-  // 省略
-  }
+    <span class="code-filename">pages/index.tsx</span>
+    
+    ```diff
+    const register = () => {
+      // 省略
+      }
 
-+ const remove = (id: number) => {
-+     const newState = todoList.filter((todo) => todo.id !== id)
-+     setTodoList(newState)
-+   }
-```
+    + const remove = (id: number) => {
+    +     const newState = todoList.filter((todo) => todo.id !== id)
+    +     setTodoList(newState)
+    +   }
+    ```
 
-```diff
--    <button>削除</button>
-+    <button onClick={() => remove(todo.id)}>削除</button>
-```
+    <span class="code-filename">pages/index.tsx</span>
+    ```diff
+    -    <button>削除</button>
+    +    <button onClick={() => remove(todo.id)}>削除</button>
+    ```
 
 ### 解説
 
@@ -748,7 +790,9 @@ const register = () => {
 
 現在のコードで、map 関数のおさらいをしましょう。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 <ul>
   {todoList.map((todo) => (
     <li key={todo.id} className="flex gap-2">
@@ -761,7 +805,7 @@ const register = () => {
 
 `todoList` が初期状態の場合、上記コードを map を使わないで書くと、以下のようになります。各 Todo が削除ボタンを持ちます。 `onClick` 内の `remove` は Todo の `id` を引数として受け取っています。
 
-```ts
+```typescript
 <ul>
   <li key=0 className="flex gap-2">
     <p>髪を切りに行く</p>
@@ -782,7 +826,7 @@ const register = () => {
 
 [filter 関数]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter")とは、与えられた関数によって実装されたテストに合格したすべての配列からなる新しい配列を生成します。
 
-```ts
+```typescript
 const words = [
   "spray",
   "limit",
@@ -800,7 +844,9 @@ console.log(result);
 
 今回実装した `remove` を確認します。`remove` は、Todo の `id` を引数として受け取ります。 `newState` は、 `todoList` から、 `remove` の引数と一致する `id` を持った Todo が取り除かれた配列です。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const remove = (id: number) => {
   const newState = todoList.filter((todo) => todo.id !== id);
   setTodoList(newState);
@@ -820,59 +866,67 @@ const remove = (id: number) => {
 
 1. 完了チェックボックスの用意
 
-```diff
-<li
-  key={todo.id}
-+  style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-  className="flex gap-4 p-4"
->
-+  <input
-+    type="checkbox"
-+    checked={todo.isDone}
-+  />
-  <p>{todo.name}</p>
-  <button onClick={() => remove(todo.id)}>削除</button>
-</li>
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    <li
+      key={todo.id}
+    +  style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+      className="flex gap-4 p-4"
+    >
+    +  <input
+    +    type="checkbox"
+    +    checked={todo.isDone}
+    +  />
+      <p>{todo.name}</p>
+      <button onClick={() => remove(todo.id)}>削除</button>
+    </li>
+    ```
 
 2. toggle 関数の作成
 
-```diff
-const remove = (id: number) => {
-  // 省略
-};
+    <span class="code-filename">pages/index.tsx</span>
+    ```diff
+    const remove = (id: number) => {
+      // 省略
+    };
 
-+ const toggle = (id: number) => {
-+   const newState = todoList.map((todo) => {
-+     if (todo.id !== id) return todo;
-+     return { ...todo, isDone: !todo.isDone };
-+   });
-+
-+   setTodoList(newState);
-+ };
-```
+    + const toggle = (id: number) => {
+    +   const newState = todoList.map((todo) => {
+    +     if (todo.id !== id) return todo;
+    +     return { ...todo, isDone: !todo.isDone };
+    +   });
+    +
+    +   setTodoList(newState);
+    + };
+    ```
 
-```diff
-  <input
-    type="checkbox"
-    checked={todo.isDone}
-+    onChange={() => toggle(todo.id)}
-  />
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+      <input
+        type="checkbox"
+        checked={todo.isDone}
+    +    onChange={() => toggle(todo.id)}
+      />
+    ```
 
 ### 解説
 
-#### <input type="checkbox">
+#### input type="checkbox"
 
 [`<input type=“checkbox”>`]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox")でチェックボックスが作れます。checked 属性を使うことで、チェックボックスの挙動をコントロールできます。
 今回の実装を確認します。 `isDone` は Boolean 型でした。`isDone` が `true` ならチェックが入り、`false` なら空欄になります。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 <input type="checkbox" checked={todo.isDone} onChange={() => toggle(todo.id)} />
 ```
 
 mock0 の `isDone` を `false` から `true` に変えて、ローカルホストを確認してみましょう。
 
+<span class="code-filename">pages/index.tsx</span>
 ```diff
 const mock0: Todo = {
   id: 0,
@@ -887,7 +941,7 @@ const mock0: Todo = {
 [論理否定 (!)]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Logical_NOT") 演算子 (論理反転、否定) は、真値を取ると偽値になり、偽値になると真値になります。
 今回の実装を確認します。todo.isDone が true のとき isDone は false になり、todo.isDone が false のとき isDone は true になります。
 
-```ts
+```typescript
 isDone: !todo.isDone;
 ```
 
@@ -895,7 +949,7 @@ isDone: !todo.isDone;
 
 [厳密不等価演算子 (!==)]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Strict_inequality") は、2 つのオペランド（被演算子）が等しくないことを検査し、`true` か `false` で結果を返します。
 
-```ts
+```typescript
 console.log(1 !== 1);
 // expected output: false
 console.log("1" !== 1);
@@ -906,7 +960,7 @@ console.log("1" !== 1);
 
 [if 文]("https://jsprimer.net/basic/condition/#if-statement")を使うことで、プログラム内に条件分岐を書けます。if 文は次のような構文が基本形となります。 条件式の評価結果が `true` であるならば、実行する文が実行されます。
 
-```ts
+```typescript
 if (条件式) {
   実行する文;
 }
@@ -914,7 +968,9 @@ if (条件式) {
 
 今回の実装を確認します。`togggle` の引数と `todo.id` が異なる場合は、`todo` がそのまま返されます。逆に、`togggle` の引数と `todo.id` が同じだった場合は、if 文に続く処理 `return { ...todo, isDone: !todo.isDone }` に移動します。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const toggle = (id: number) => {
   const newState = todoList.map((todo) => {
     if (todo.id !== id) {
@@ -929,7 +985,9 @@ const toggle = (id: number) => {
 
 上記で書かれたコードは、以下のようにリファクタリングできます。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const toggle = (id: number) => {
   const newState = todoList.map((todo) => {
     if (todo.id !== id) return todo;
@@ -954,29 +1012,34 @@ const toggle = (id: number) => {
 
 1. クリアボタンの作成
 
-```diff
-  <button onClick={register}>登録</button>
-+ <button>完了したタスクを一掃</button>
-</main>
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+      <button onClick={register}>登録</button>
+    + <button>完了したタスクを一掃</button>
+    </main>
+    ```
 
 2. clear 関数の作成
 
-```diff
-const toggle = () => {
-  // 省略
-};
+    <span class="code-filename">pages/index.tsx</span>
+    ```diff
+    const toggle = () => {
+      // 省略
+    };
 
-+ const clear = () => {
-+   const newState = todoList.filter((todo) => !todo.isDone);
-+   setTodoList(newState);
-+ };
-```
+    + const clear = () => {
+    +   const newState = todoList.filter((todo) => !todo.isDone);
+    +   setTodoList(newState);
+    + };
+    ```
 
-```diff
-- <button>完了したタスクを一掃</button>
-+ <button onClick={clear}>完了したタスクを一掃</button>
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    - <button>完了したタスクを一掃</button>
+    + <button onClick={clear}>完了したタスクを一掃</button>
+    ```
 
 ## Todo コンポーネントの作成
 
@@ -987,108 +1050,121 @@ const toggle = () => {
 1. Todo コンポーネントを作成する
    まず、Home コンポーネントの上に、Todo コンポーネントを作ります。
 
-```diff
-+ const Todo = () => {
-+   return (
-+   );
-+ };
+    <span class="code-filename">pages/index.tsx</span>
 
-const Home: NextPage = () => {
-```
+    ```diff
+    + const Todo = () => {
+    +   return (
+    +   );
+    + };
 
-次に、Home コンポーネントの以下の箇所を切り取ります。
+    const Home: NextPage = () => {
+    ```
 
-```diff
-<ul>
-  {todoList.map((todo) => (
--    <li
--      key={todo.id}
--      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
--      className="flex gap-4 p-4"
--    >
--      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
--      <p>{todo.name}</p>
--      <button onClick={remove(todo.id)}>削除</button>
--    </li>
-  ))}
-</ul>
-```
+    次に、Home コンポーネントの以下の箇所を切り取ります。
+    
+    <span class="code-filename">pages/index.tsx</span>
 
-切り取った部分を、Todo コンポーネントに貼り付けます。
+    ```diff
+    <ul>
+      {todoList.map((todo) => (
+    -    <li
+    -      key={todo.id}
+    -      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+    -      className="flex gap-4 p-4"
+    -    >
+    -      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
+    -      <p>{todo.name}</p>
+    -      <button onClick={remove(todo.id)}>削除</button>
+    -    </li>
+      ))}
+    </ul>
+    ```
 
-```diff
-const Todo = () => {
-  return (
-+    <li
-+      key={todo.id}
-+      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-+      className="flex gap-4 p-4"
-+    >
-+      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-+      <p>{todo.name}</p>
-+      <button onClick={remove(todo.id)}>削除</button>
-+    </li>
-  );
-};
-```
+    切り取った部分を、Todo コンポーネントに貼り付けます。
+    
+    <span class="code-filename">pages/index.tsx</span>
 
-`todo` `remove` `toggle` の部分にでエラーが出ていたら正解です。
+    ```diff
+    const Todo = () => {
+      return (
+    +    <li
+    +      key={todo.id}
+    +      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+    +      className="flex gap-4 p-4"
+    +    >
+    +      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
+    +      <p>{todo.name}</p>
+    +      <button onClick={remove(todo.id)}>削除</button>
+    +    </li>
+      );
+    };
+    ```
 
-エラーが出ているのは、Todo コンポーネントの中で`todo` `remove` `toggle`を呼び出しても、Todo コンポーネント内にこれらに対応するものがないからです。今から、親コンポーネント（Home）から子コンポーネント（Todo）へ、`todo` `remove` `toggle` が渡せるようにします。（詳しくは解説で）
+    `todo` `remove` `toggle` の部分にでエラーが出ていたら正解です。
+
+    エラーが出ているのは、Todo コンポーネントの中で`todo`     `remove` `toggle`を呼び出しても、Todo コンポーネント内にこれらに対応するものがないからです。今から、親コンポーネント（Home）から子コンポーネント（Todo）へ、`todo` `remove` `toggle` が渡せるようにします。（詳しくは解説で）
 
 2. Todo コンポーネントのインターフェイスを作る
    TodoProps という名前のインターフェイスを作ります。
 
-```diff
-+ interface TodoProps {
-+  todo: Todo;
-+  onToggle: () => void;
-+  onRemove: () => void;
-+ }
+    <span class="code-filename">pages/index.tsx</span>
 
-const Todo = () => {
-```
+    ```diff
+    + interface TodoProps {
+    +  todo: Todo;
+    +  onToggle: () => void;
+    +  onRemove: () => void;
+    + }
 
-次に、以下のように修正してください。
+    const Todo = () => {
+    ```
 
-```diff
-- const Todo = () => {
-+ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
-```
+    次に、以下のように修正してください。
 
-`return` の中も、以下のように修正してください。先程までのエラーが消えるはずです。
+    <span class="code-filename">pages/index.tsx</span>
 
-```diff
-return (
-    <li
-      key={todo.id}
-      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-      className="flex gap-4 p-4"
-    >
--      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-+      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-      <p>{todo.name}</p>
--      <button onClick={remove(todo.id)}>削除</button>
-+      <button onClick={onRemove}>削除</button>
-    </li>
-  );
-```
+    ```diff
+    - const Todo = () => {
+    + const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+    ```
 
-5. Home コンポーネントの中で Todo コンポーネントを呼び出す
+    `return` の中も、以下のように修正してください。先程までのエラーが消えるはずです。
+    
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    return (
+        <li
+          key={todo.id}
+          style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+          className="flex gap-4 p-4"
+        >
+    -      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
+    +      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+          <p>{todo.name}</p>
+    -      <button onClick={remove(todo.id)}>削除</button>
+    +      <button onClick={onRemove}>削除</button>
+        </li>
+      );
+    ```
+
+3. Home コンポーネントの中で Todo コンポーネントを呼び出す
    ローカルホストで挙動を確認して下しさい。
+    <span class="code-filename">pages/index.tsx</span>
 
-```diff
-<ul>
-  {todoList.map((todo) => (
-+    <Todo
-+      key={todo.id}
-+      todo={todo}
-+      onRemove={() => remove(todo.id)}
-+      onToggle={() => toggle(todo.id)}
-+    />
-  ))}
-</ul>
-```
+    ```diff
+    <ul>
+      {todoList.map((todo) => (
+    +    <Todo
+    +      key={todo.id}
+    +      todo={todo}
+    +      onRemove={() => remove(todo.id)}
+    +      onToggle={() => toggle(todo.id)}
+    +    />
+      ))}
+    </ul>
+    ```
 
 ### 解説
 
@@ -1099,7 +1175,7 @@ return (
 1. 関数名が大文字から始まる
 2. JSX を返す
 
-```ts
+```typescript
 const 大文字で始める関数名 = (引数) => {
 
   return (
@@ -1111,14 +1187,18 @@ const 大文字で始める関数名 = (引数) => {
 #### 関数のスコープ
 
 [スコープ]("https://jsprimer.net/basic/function-scope/#what-is-scope")とは、変数の名前や関数などの参照できる範囲を決めるものです。 スコープの中で定義された変数はスコープの内側でのみ参照でき、スコープの外側からは参照できません。例えば、関数の中で定義された変数は、その関数の中でしか参照することしかできないことになっています。
+
 今回の実装を振り返ります。実装手順 1 の終わりでエラーが出ていたのは、Home コンポーネントの変数がスコープ外である Todo コンポーネントから呼び出されていたからです。コンポーネントは関数でしたね。
-（写真）
+
+<img src="https://drive.google.com/uc?id=1ktZMP8zHjOKv5UUiNyFkpU7aY84peOVE" width="800" allow="autoplay"/>
 
 #### 親コンポーネントから子コンポーネントに Props を渡す
 
 [コンポーネントは親から子へ Props として変数や関数、JSX などあらゆる情報をわたすことができます。]("https://beta.reactjs.org/learn/passing-props-to-a-component")今回の実装を確認します。Home コンポーネントから Todo コンポーネントを呼び出しました。このとき、Home コンポーネントが親、Todo コンポーネントが子になります。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 <ul>
   {todoList.map((todo) => (
     <Todo
@@ -1135,7 +1215,9 @@ Props は、`todo` や `onRemove`、`onToggle`になります。例えば、 Hom
 
 Todo コンポーネントを確認します。削除ボタンの `onClick` に `onRemove` が渡されていますね。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
   return (
     <li
@@ -1155,7 +1237,9 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
 
 インターフェイスとは、Props の型の集合です。インターフェイスを定義することで、子コンポーネントが親から受け取る Props の型を定義できます。実装を確認します。`TodoProps` は、「`todo` は Todo」「`onToggle` は引数無しで void を返す関数」「`onRemove` は 引数無しで void を返す関数」という Props の型定義の集合です。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 interface TodoProps {
   todo: Todo;
   onToggle: () => void;
@@ -1172,46 +1256,51 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
 ## Todo を編集モードに切り替えられるようにする
 
 このセクションと次のセクションで、既存の Todo を編集する機能を実装します。このセクションでは、既存の Todo を編集モードに切り替えられるようにします。
-（動画）
+
+<video src="https://drive.google.com/uc?id=1hHb3e7kTpuDWcnsx390w-ls2ghkYAFNd" type="video/mp4" autoplay controls loop playsinline  width="600"></video>
 
 ### 実装手順
 
 1. 編集モードを作成する
 
-```diff
-const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
-+  const [isEditing, setIsEditing] = useState(false)
+    <span class="code-filename">pages/index.tsx</span>
 
-+  const startEditing = () => setIsEditing(true)
-+  const finishEditing = () => setIsEditing(false)
-```
+    ```diff
+    const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
+    +  const [isEditing, setIsEditing] = useState(false)
 
-```diff
-return (
-+  <>
-+    {isEditing ? (
-+      <li>
-+        <input
-+          defaultValue={todo.name}
-+          className="border"
-+        />
-+        <button onClick={finishEditing}>編集終了</button>
-+      </li>
-+    ) : (
-      <li
-        key={todo.id}
-        style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-        className="flex gap-4 p-4"
-      >
-        <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-        <p>{todo.name}</p>
-        <button onClick={startEditing}>編集</button>
-        <button onClick={onRemove}>削除</button>
-      </li>
-+    )}
-+  </>
-);
-```
+    +  const startEditing = () => setIsEditing(true)
+    +  const finishEditing = () => setIsEditing(false)
+    ```
+
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    return (
+    +  <>
+    +    {isEditing ? (
+    +      <li>
+    +        <input
+    +          defaultValue={todo.name}
+    +          className="border"
+    +        />
+    +        <button onClick={finishEditing}>編集終了</button>
+    +      </li>
+    +    ) : (
+          <li
+            key={todo.id}
+            style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+            className="flex gap-4 p-4"
+          >
+            <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+            <p>{todo.name}</p>
+            <button onClick={startEditing}>編集</button>
+            <button onClick={onRemove}>削除</button>
+          </li>
+    +    )}
+    +  </>
+    );
+    ```
 
 ### 解説
 
@@ -1219,7 +1308,9 @@ return (
 
 [三項演算子]("https://hackmd.io/@Kosuke2000/nabeatsu-app#%E4%B8%89%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90")を使って、UI を分岐させることができます。実装を確認します。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 return (
   <>
     {isEditing ? (
@@ -1238,75 +1329,86 @@ return (
 
 ## Todo を編集できるようにする
 
-このセクションでは、編集モードで入力した内容が Todo に反映されるようにします。
+このセクションでは、編集モードで入力した内容がアプリに反映されるようにします。
 
 ### 実装手順
 
 1. 反映する関数を作り、Prop として Todo コンポーネントにわたす
    まず、 Home コンポーネント内に `edit` を作ります。
+   
+   <span class="code-filename">pages/index.tsx</span>
 
-```diff
-const clear = () => {
-  // 省略
-};
+    ```diff
+    const clear = () => {
+      // 省略
+    };
 
-+ const edit = (id: number) => (name: string) => {
-+   const newState = todoList.map((todo) => {
-+     if (todo.id !== id) return todo;
-+     return { ...todo, name: name };
-+   });
-+
-+   setTodoList(newState);
-+ };
-```
+    + const edit = (id: number) => (name: string) => {
+    +   const newState = todoList.map((todo) => {
+    +     if (todo.id !== id) return todo;
+    +     return { ...todo, name: name };
+    +   });
+    +
+    +   setTodoList(newState);
+    + };
+    ```
 
-`edit` を Todo コンポーネントに渡せるように、インターフェイスを変更します。
+    `edit` を Todo コンポーネントに渡せるように、インターフェイスを変更します。
+    
+    <span class="code-filename">pages/index.tsx</span>
+    
+    ```diff
+    interface TodoProps {
+      todo: Todo
+      onToggle: () => void
+      onRemove: () => void
+    +  onEdit: (name: string) => void
+    }
 
-```diff
-interface Props {
-  todo: Todo
-  onToggle: () => void
-  onRemove: () => void
-+  onEdit: (name: string) => void
-}
+    - const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+    + const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
+    ```
 
-- const Todo = ({ todo, onToggle, onRemove }: Props) => {
-+ const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
-```
+    `edit` を Todo コンポーネントの `onEdit` に渡します。
+    
+    <span class="code-filename">pages/index.tsx</span>
+    
+    ```diff
+    <Todo
+      key={todo.id}
+      todo={todo}
+      onRemove={() => remove(todo.id)}
+      onToggle={() => toggle(todo.id)}
+    +  onEdit={edit(todo.id)}
+    />
+    ```
 
-`edit` を Todo の `onEdit` に渡します。
+2. 編集フォームへの入力内容が反映されるようにする
 
-```diff
-<Todo
-  key={todo.id}
-  todo={todo}
-  onRemove={() => remove(todo.id)}
-  onToggle={() => toggle(todo.id)}
-+  onEdit={edit(todo.id)}
-/>
-```
+    <span class="code-filename">pages/index.tsx</span>
 
-2. 入力内容が Todo に反映されるようにする
+    ```diff
+    const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
+      const [isEditing, setIsEditing] = useState(false)
 
-```diff
-const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
-  const [isEditing, setIsEditing] = useState(false)
+    +  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    +    onEdit(e.target.value)
+    +  }
+    ```
 
-+  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-+    onEdit(e.target.value)
-+  }
-```
 
-```diff
-<li>
-  <input
-+    onChange={handleChangeInput}
-    defaultValue={todo.name}
-    className="border"
-  />
-  <button onClick={finishEditing}>編集終了</button>
-</li>
-```
+    <span class="code-filename">pages/index.tsx</span>
+
+    ```diff
+    <li>
+      <input
+    +    onChange={handleChangeInput}
+        defaultValue={todo.name}
+        className="border"
+      />
+      <button onClick={finishEditing}>編集終了</button>
+    </li>
+    ```
 
 ### 解説
 
@@ -1314,7 +1416,7 @@ const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
 
 [カリー化]("https://kazchimo.com/2021/03/29/monkey_curry/")とは、複数の引数を分割する方法です。２つの数の和を出す関数を考えます。まず、カリー化せずに書きます。
 
-```ts
+```typescript
 const add = (x, y) => x + y;
 add(1, 2);
 // ⇛ 3
@@ -1324,7 +1426,7 @@ add(1, 3);
 
 カリー化すると、以下のようになります。
 
-```ts
+```typescript
 const add = (x) => (y) => x + y;
 const add1 = add(1);
 add1(2);
@@ -1335,13 +1437,17 @@ add1(3);
 
 今回の実装を確認します。
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 const edit = (id: number) => (name: string) => {
   // 省略
 };
 ```
 
-```ts
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
 {
   todoList.map((todo) => (
     <Todo
@@ -1357,7 +1463,7 @@ const edit = (id: number) => (name: string) => {
 
 `edit` は 1 つ目の引数が入った状態で、`onEdit` に渡されています。つまり、`onEdit` に渡される関数は以下のようになります。
 
-```ts
+```typescript
 const passedFunction = (name: string) => {
   const newState = todoList.map((todo) => {
     if (todo.id !== id) return todo;
@@ -1368,24 +1474,29 @@ const passedFunction = (name: string) => {
 };
 ```
 
-Todo コンポーネントのインターフェイスから、onEdit の型を確認します。「引数に string を受け取り void を返す関数」と定義されていますね。
+`TodoProps` から、`onEdit` の型を確認します。「引数に string を受け取り void を返す関数」と定義されていますね。
 
-```ts
-onEdit: (name: string) => void
+<span class="code-filename">pages/index.tsx</span>
+
+```typescript
+interface TodoProps {
+ // 省略
+  onEdit: (name: string) => void
+}
 ```
 
 ## 参考文献
 
 - [オブジェクト · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/object/")
 - [配列 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/array/")
-- [<input type="text"> - HTML: HyperText Markup Language | MDN ]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text")
+- [input type="text" - HTML: HyperText Markup Language | MDN ]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text")
 - [React onChange Events (With Examples) - Upmostly]("https://upmostly.com/tutorials/react-onchange-events-with-examples#:~:text=An%20onChange%20event%20handler%20returns,target.")
 - [イベントへの入門 - ウェブ開発を学ぶ | MDN]("https://developer.mozilla.org/ja/docs/Learn/JavaScript/Building_blocks/Events")
 - [三章第五回　イベントオブジェクト — JavaScript 初級者から中級者になろう — uhyohyo.net]("https://uhyohyo.net/javascript/3_5.html")
 - [any 型で諦めない React.EventCallback - Qiita]("https://qiita.com/Takepepe/items/f1ba99a7ca7e66290f24")
 - [変数と宣言 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/variables/")
 - [Array.prototype.filter() - JavaScript | MDN]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter")
-- [<input type="checkbox"> - HTML: HyperText Markup Language | MDN]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox")
+- [input type="checkbox" - HTML: HyperText Markup Language | MDN]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox")
 - [論理否定 (!) - JavaScript | MDN]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Logical_NOT")
 - [厳密不等価 (!==) - JavaScript | MDN]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Strict_inequality")
 - [条件分岐 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/condition")
