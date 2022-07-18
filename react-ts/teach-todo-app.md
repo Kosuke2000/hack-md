@@ -409,13 +409,30 @@ const function1 = (todo) => (
 
 `input` は、`value` を持っています。フォームに入力された内容は `value` に保存されます。
 
+##### イベント
+
+[イベント]("https://developer.mozilla.org/ja/docs/Learn/JavaScript/Building_blocks/Events")とは、アプリ内のユーザーの動作、出来事を指します。必要であれば、イベントに対して、何らかの反応を返す事ができます。その際用いるのがイベントプロパティです。イベントプロパティはいろいろあります。 例えば `onClick` は「ユーザーがボタンをクリックしたとき」に何らかの処理を実行します。
+
+```ts
+<button onClick={＜クリックされたときに行う処理＞}>ボタン</button>
+```
+
+また、イベントプロパティには型があります。TypeScript では、以下のように表現されます。使い方は後述します。
+
+```ts
+// イベントプロパティ: イベントプロパティの型
+type Props = {
+  onClick: (event: React.MouseEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onkeypress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+};
+```
+
 ##### `onChage`
 
-`onChage` に渡された関数は、`input` の `value` が変更したときに呼び出されます。
+`onChage` はイベントプロパティの一つです。今回の実装では、「ユーザーがフォームに入力するとき」、つまり`input` の `value` に変更が起こったときに、onChange に渡された関数が実行されます。このとき実行される関数の引数には、[イベントオブジェクト]("https://uhyohyo.net/javascript/3_5.html")が渡されます。イベントオブジェクトから、イベントの様々な情報を得ることができます。
 
-##### 例： input に onChange を追加する
-
-下のコードをコンポーネントの `return` 以下に追加してください。ローカルホストで開発者ツールの Console を開き、作成したフォームに入力します。Console に入力中の内容が表示されるはずです。
+具体例を見ます。下のコードをコンポーネントの `return` 以下に追加してください。ローカルホストで開発者ツールの Console を開き、作成したフォームに入力します。Console に入力中の内容が表示されるはずです。
 
 ```ts
 <input
@@ -431,7 +448,7 @@ const function1 = (todo) => (
 3. onChange に渡された関数が呼び出される
    今回の例だと、`(e) => console.log(e.target.value)`が呼び出される。
 
-onChage は、渡された関数の引数に Synthetic Event を渡します。 Synthetic Event とは、input 関連のメタ情報のことです。今回の実装だと、onChange から渡される Synthetic Event は `e`と呼ばれています。 `e.target.value` で `input` に入力された内容、つまり`input` の `value`を取得することができます。
+今回の実装だと、onChange から渡されるイベントオブジェクトは `e`と呼ばれています。 `e.target.value` で フォームに入力された内容、つまり`input` の `value`を取得することができます。
 
 ##### フォームの入力内容をステートとして管理する
 
@@ -466,13 +483,16 @@ const Home: NextPage = () => {
 
 ##### 実装箇所の解説
 
-今回の実装を観察します。先程までの解説とほとんど同じですが、`onChange` に直接関数を書いて渡すのではなく、`handleChangeInput`という関数名を渡しています。この場合、関数、または、その引数に適当な型を指定する必要があります。 `e: React.ChangeEvent<HTMLInputElement>` とは、「引数は`e`。`e`の型は、`input`内の`onChange`に渡す関数の型。」という意味を表します。 `: React.ChangeEvent<HTMLInputElement>`を削除してみてください。onChange の箇所で型エラーが出るはずです。
+今回の実装を観察します。先程までの解説とほとんど同じですが、`onChange` に直接関数を書いて渡すのではなく、`handleChangeInput`という関数名を渡しています。`onChange` に渡される引数の型が `e: React.ChangeEvent<HTMLInputElement>` と指定されているところも確認してください。
 
 ```ts
 const [text, setText] = useState("");
 const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
   setText(e.target.value);
 };
+
+// 再掲: onChange の型
+type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
 ```
 
 ```ts
@@ -485,6 +505,8 @@ const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 ```
 
 ## Todo を登録できるようにする
+
+このセクションでは、フォームの入力内容をもとに新しい Todo を作成できるようにします。
 
 ### 実装手順
 
@@ -512,7 +534,7 @@ const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
      const [todoList, setTodoList] = useState<Todo[]>(mockTodoList)
      const [text, setText] = useState("")
 
-     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+     const handleChangeInput: ChangeEventHandler<HTMLInputElement> = (e) => {
        setText(e.target.value)
      }
 
@@ -538,7 +560,9 @@ const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 ### 解説
 
-#### `const` と `let`
+#### `const`
+
+[`const`]("https://github.com/Kosuke2000/hack-md/tree/feature/teach-todo-app")とは、再代入できない変数の宣言とその変数が参照する値（初期値）を定義できます。
 
 #### インクリメント演算子`++`
 
@@ -638,6 +662,10 @@ const register = () => {
 - [オブジェクト · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/object/")
 - [配列 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/array/")
 - [<input type="text"> - HTML: HyperText Markup Language | MDN ]("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text")
+- [React onChange Events (With Examples) - Upmostly]("https://upmostly.com/tutorials/react-onchange-events-with-examples#:~:text=An%20onChange%20event%20handler%20returns,target.")
+- [イベントへの入門 - ウェブ開発を学ぶ | MDN]("https://developer.mozilla.org/ja/docs/Learn/JavaScript/Building_blocks/Events")
+- [三章第五回　イベントオブジェクト — JavaScript 初級者から中級者になろう — uhyohyo.net]("https://uhyohyo.net/javascript/3_5.html")
+- [any 型で諦めない React.EventCallback - Qiita]("https://qiita.com/Takepepe/items/f1ba99a7ca7e66290f24")
 
 ```
 
