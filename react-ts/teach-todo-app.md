@@ -504,6 +504,26 @@ type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
 />
 ```
 
+最後に、デモで使用したコードを次に進んでください。
+
+```diff
+const Home: NextPage = () => {
+  const [todoList, setTodoList] = useState(mockTodoList)
+  const [text, setText] = useState("")
+-  const [demo, setDemo] = useState("")
+
+- console.log(demo)
+```
+
+```diff
+- <input
+-   value={demo}
+-  className="border-2 border-red-500"
+-   onChange={(e) => console.log(e.target.value)}
+-   onChange={(e) => setDemo(e.target.value)}
+- />
+```
+
 ## Todo を登録できるようにする
 
 このセクションでは、フォームの入力内容をもとに新しい Todo を作成できるようにします。
@@ -538,7 +558,7 @@ type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
        setText(e.target.value)
      }
 
-   + const register = (text: string) => {
+   + const register = () => {
    +   const newTodo: Todo = {
    +     id: nextId,
    +     name: text,
@@ -562,17 +582,128 @@ type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
 
 #### `const`
 
-[`const`]("https://github.com/Kosuke2000/hack-md/tree/feature/teach-todo-app")とは、再代入できない変数の宣言とその変数が参照する値（初期値）を定義できます。
+[`const`]("https://jsprimer.net/basic/variables/#const")とは、再代入できない変数の宣言とその変数が参照する値（初期値）を定義できます。
+
+```ts
+const 変数名 = 初期値;
+```
+
+再代入しようとするとエラーがでます。
+
+```ts
+const name = "Kosuke";
+name = "Takashi"; // => エラー：Cannot assign to 'name' because it is a constant.
+```
+
+#### `let`
+
+[`let`]("https://jsprimer.net/basic/variables/#let")とは、値の再代入が可能な変数を宣言できます。使い方は `const` とほぼ同じです。
+
+```ts
+let name = "Kosuke";
+name = "Takashi";
+```
+
+今回の実装では、唯一 `nextID`が`let`で宣言されています。
+
+```ts
+let nextId = 3;
+```
 
 #### インクリメント演算子`++`
 
-#### 配列に要素を追加する
+[インクリメント演算子`++`]("https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Increment")は、オペランド（被演算子）をインクリメント (1 を加算) して値を返します。
 
-#### `register` 内の処理
+```ts
+let x = 3;
+y = x++;
+
+// y = 3
+// x = 4
+```
+
+今回の実装を確認してみましょう。変数`nextID`がインクリメントされています。
+
+```ts
+const register = () => {
+  // 省略
+
+  setText("");
+  nextId++;
+};
+```
+
+`nextId++` は、以下のコードの省略形です。 `nextID` に `nextID` をインクリメントした値が再代入されています。
+
+```ts
+nextId = nextId++;
+```
+
+#### 配列 TodoList に追加する要素を作成する
+
+`register` 内の処理を確認します。まず、`todoList` に追加する`newTodo` を作成します。ポイントは 2 つです。
+
+- `newTodo`は Todo モデルの型に従っている
+- `name` の値は `text`
+
+```ts
+const register = () => {
+  const newTodo: Todo = {
+    id: nextId,
+    name: text,
+    isDone: false,
+  };
+  // 省略
+};
+```
 
 #### spread syntax `...`
 
+[spread syntax `...`]("https://typescriptbook.jp/reference/values-types-variables/array/spread-syntax-for-array")を使うことで、要素を展開することができます。
+
+```ts
+const arr = [1, 2, 3];
+const arr2 = [...arr, 4];
+
+console.log(arr2); // => expected output is [1, 2, 3, 4]
+```
+
+今回の実装では、 `register` の中で使用されています。
+
+```ts
+const register = () => {
+  const newTodo: Todo = {
+    id: nextId,
+    name: text,
+    isDone: false,
+  };
+  setTodoList([...todoList, newTodo]);
+
+  setText("");
+  nextId++;
+};
+```
+
+`todoList` が初期値の場合、spread syntax では以下のように展開されます。
+
+```ts
+setTodoList([mock0, mock1, mock2, newTodo]);
+```
+
 ### まとめ
+
+`register` の処理を確認します。
+
+1. フォームに新たに追加したい Todo を入力
+2. 「Todo に登録」ボタンをクリック
+3. フォームに入力内容を `name`に持った `newTodo`を作成
+4. `todoList`内の要素に `newTodo`を追加した配列を、新たに `todoList` にする
+5. フォームがリセット
+6. `nextId` がインクリメント
+
+#### 補足
+
+`id`とは、各 Todo の識別子の役割を果たしています。Todo が作られるたびに、`nextId` をインクリメントさせることで、各 Todo が固有の `id` を持つようにしています。今回の実装では、すでにモックデータで 0、1、2 の `id` が使われていたので、 `let nextId = 3` としました。最初に作られる Todo の id は 3、それ以降、Todo の `id` は 1 ずつ大きくなります。
 
 ## Todo 削除ボタンを作る
 
@@ -666,6 +797,7 @@ const register = () => {
 - [イベントへの入門 - ウェブ開発を学ぶ | MDN]("https://developer.mozilla.org/ja/docs/Learn/JavaScript/Building_blocks/Events")
 - [三章第五回　イベントオブジェクト — JavaScript 初級者から中級者になろう — uhyohyo.net]("https://uhyohyo.net/javascript/3_5.html")
 - [any 型で諦めない React.EventCallback - Qiita]("https://qiita.com/Takepepe/items/f1ba99a7ca7e66290f24")
+- [変数と宣言 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/variables/")
 
 ```
 
