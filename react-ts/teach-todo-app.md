@@ -1,8 +1,7 @@
-\*\*\*\*---
+---
 title: Todo リストを作る
 description: React TypeScript を習得するためのノート
 image: https://i.imgur.com/Ml6wuFm.png
-
 ---
 
 # Todo リストを作る
