@@ -1172,31 +1172,83 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
 
 ## Todo を編集モードに切り替えられるようにする
 
+このセクションと次のセクションで、既存の Todo を編集する機能を実装します。このセクションでは、既存の Todo を編集モードに切り替えられるようにします。
+（動画）
+
 ### 実装手順
 
-1. 行頭が `+` のコードを `Home` コンポーネントに追加してください
-2.
+1. 編集モードを作成する
+
+```diff
+const Todo = ({ todo, onToggle, onRemove, onEdit }: Props) => {
++  const [isEditing, setIsEditing] = useState(false)
+
++  const startEditing = () => setIsEditing(true)
++  const finishEditing = () => setIsEditing(false)
+```
+
+```diff
+return (
++  <>
++    {isEditing ? (
++      <li>
++        <input
++          defaultValue={todo.name}
++          className="border"
++        />
++        <button onClick={finishEditing}>編集終了</button>
++      </li>
++    ) : (
+      <li
+        key={todo.id}
+        style={{ backgroundColor: todo.isDone ? "red" : "white" }}
+        className="flex gap-4 p-4"
+      >
+        <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+        <p>{todo.name}</p>
+        <button onClick={startEditing}>編集</button>
+        <button onClick={onRemove}>削除</button>
+      </li>
++    )}
++  </>
+);
+```
 
 ### 解説
 
-#### 解説項目
+#### UI の条件分岐
 
-[解説項目](https://hoge)とは、...。
+[三項演算子]("https://hackmd.io/@Kosuke2000/nabeatsu-app#%E4%B8%89%E9%A0%85%E6%BC%94%E7%AE%97%E5%AD%90")を使って、UI を分岐させることができます。実装を確認します。
+
+```ts
+return (
+  <>
+    {isEditing ? (
+      <li>Todo編集モード＝isEditingがtrueのときのUI</li>
+    ) : (
+      <li>Todo表示モード＝isEditingがfalseのときのUI</li>
+    )}
+  </>
+);
+```
 
 ### まとめ
 
+1. 編集ボタンを押すと、編集モードに見た目が切り替わる
+2. 編集終了ボタンを押すと、表示モードに切り替わる
+
 ## Todo を編集できるようにする
+
+このセクションでは、編集モードで入力した内容が Todo に反映されるようにします。
 
 ### 実装手順
 
-1. 行頭が `+` のコードを `Home` コンポーネントに追加してください
-2.
+1. 更新する関数を作り、Prop として Todo コンポーネントにわたす
+2. 入力内容が Todo に反映されるようにする
 
 ### 解説
 
-#### 解説項目
-
-[解説項目](https://hoge)とは、...。
+#### 引数のカリイカ
 
 ### まとめ
 
