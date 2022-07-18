@@ -694,8 +694,8 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 
 `register` の処理を確認します。
 
-1. フォームに新たに追加したい Todo を入力
-2. 「Todo に登録」ボタンをクリック
+1. フォームに新たに追加したい Todo が入力される
+2. 「Todo に登録」ボタンをクリックされる
 3. フォームに入力内容を `name`に持った `newTodo`を作成
 4. `todoList`内の要素に `newTodo`を追加した配列を、新たに `todoList` にする
 5. フォームがリセット
@@ -706,6 +706,8 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 `id`とは、各 Todo の識別子の役割を果たしています。Todo が作られるたびに、`nextId` をインクリメントさせることで、各 Todo が固有の `id` を持つようにしています。今回の実装では、すでにモックデータで 0、1、2 の `id` が使われていたので、 `let nextId = 3` としました。最初に作られる Todo の id は 3、それ以降、Todo の `id` は 1 ずつ大きくなります。
 
 ## Todo 削除ボタンを作る
+
+このセクションでは、Todo を削除する機能を実装します。
 
 ### 実装手順
 
@@ -737,11 +739,73 @@ const register = () => {
 
 ### 解説
 
-#### 配列から要素を削除する
+#### map 関数のおさらい
+
+現在のコードで、map 関数のおさらいをしましょう。
+
+```ts
+<ul>
+  {todoList.map((todo) => (
+    <li key={todo.id} className="flex gap-2">
+      <p>{todo.name}</p>
+      <button onClick={() => remove(todo.id)}>削除</button>
+    </li>
+  ))}
+</ul>
+```
+
+`todoList` が初期状態の場合、上記コードを map を使わないで書くと、以下のようになります。各 Todo が削除ボタンを持ちます。 `onClick` 内の `remove` は Todo の `id` を引数として受け取っています。
+
+```ts
+<ul>
+  <li key=0 className="flex gap-2">
+    <p>髪を切りに行く</p>
+    <button onClick={() => remove(0)}>削除</button>
+  </li>
+  <li key=1 className="flex gap-2">
+    <p>プレゼントを選ぶ</p>
+    <button onClick={() => remove(1)}>削除</button>
+  </li>
+  <li key=2 className="flex gap-2">
+    <p>映画館デートする</p>
+    <button onClick={() => remove(2)}>削除</button>
+  </li>
+</ul>
+```
 
 #### filter 関数
 
+[filter 関数]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter")とは、与えられた関数によって実装されたテストに合格したすべての配列からなる新しい配列を生成します。
+
+```ts
+const words = [
+  "spray",
+  "limit",
+  "elite",
+  "exuberant",
+  "destruction",
+  "present",
+];
+
+const result = words.filter((word) => word.length > 6);
+
+console.log(result);
+// expected output: Array ["exuberant", "destruction", "present"]
+```
+
+今回実装した `remove` を確認します。`remove` は、Todo の `id` を引数として受け取ります。 `newState` は、 `todoList` から、 `remove` の引数と一致する `id` を持った Todo が取り除かれた配列です。
+
+```ts
+const remove = (id: number) => {
+  const newState = todoList.filter((todo) => todo.id !== id);
+  setTodoList(newState);
+};
+```
+
 ### まとめ
+
+1. 削除ボタンが押され、その `onClick`に渡されている `remove` が実行される
+2. `todoList` から、削除したい Todo が削除される
 
 ## Section
 
@@ -798,6 +862,11 @@ const register = () => {
 - [三章第五回　イベントオブジェクト — JavaScript 初級者から中級者になろう — uhyohyo.net]("https://uhyohyo.net/javascript/3_5.html")
 - [any 型で諦めない React.EventCallback - Qiita]("https://qiita.com/Takepepe/items/f1ba99a7ca7e66290f24")
 - [変数と宣言 · JavaScript Primer #jsprimer]("https://jsprimer.net/basic/variables/")
+- [Array.prototype.filter() - JavaScript | MDN]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter")
+
+```
+
+```
 
 ```
 
