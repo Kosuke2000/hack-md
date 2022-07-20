@@ -44,7 +44,6 @@ React + TypeScript で、Todo リストを作ります。
 
 <video src="https://drive.google.com/uc?id=1WcqTK72iIcgDrA8daXaKIoBNP_Kd8qwg" type="video/mp4" autoplay controls loop playsinline  width="640"></video>
 
-
 ## リポジトリを用意する
 
 ### 実装手順
@@ -62,51 +61,52 @@ React + TypeScript で、Todo リストを作ります。
 1. Todo モデルの作成
    行頭 `+` で始まるコードを追加してください。
 
-    <span class="code-filename">pages/index.tsx</span>
-    
-    ```diff
-    import Head from "next/head";
-    import type { NextPage } from "next";
+   <span class="code-filename">pages/index.tsx</span>
 
-    + type Todo = {
-    +   id: number
-    +   name: string
-    +   isDone: boolean
-    + }
+   ```diff
+   import Head from "next/head";
+   import type { NextPage } from "next";
 
-    const Home: NextPage = () => {
-    ```
+   + type Todo = {
+   +   id: number
+   +   name: string
+   +   isDone: boolean
+   + }
+
+   const Home: NextPage = () => {
+   ```
 
 1. モックデータ（ダミーデータ）の作成
    コードを追加してください。
-    <span class="code-filename">pages/index.tsx</span>
-    ```diff
-    export type Todo = {
-     id: number
-     name: string
-     isDone: boolean
-    }
+   <span class="code-filename">pages/index.tsx</span>
 
-    + const mockTodo0: Todo = {
-    +   id: 0,
-    +   name: "髪を切りに行く",
-    +   isDone: false,
-    + }
-    + const mockTodo1: Todo = {
-    +   id: 1,
-    +   name: "プレゼントを選ぶ",
-    +   isDone: false,
-    + }
-    + const mockTodo2: Todo = {
-    +   id: 2,
-    +   name: "映画館デートする",
-    +   isDone: false,
-    + }
+   ```diff
+   export type Todo = {
+    id: number
+    name: string
+    isDone: boolean
+   }
 
-    + const mockTodoList = [mockTodo0, mockTodo1, mockTodo2]
+   + const mockTodo0: Todo = {
+   +   id: 0,
+   +   name: "髪を切りに行く",
+   +   isDone: false,
+   + }
+   + const mockTodo1: Todo = {
+   +   id: 1,
+   +   name: "プレゼントを選ぶ",
+   +   isDone: false,
+   + }
+   + const mockTodo2: Todo = {
+   +   id: 2,
+   +   name: "映画館デートする",
+   +   isDone: false,
+   + }
 
-    const Home: NextPage = () => {
-    ```
+   + const mockTodoList = [mockTodo0, mockTodo1, mockTodo2]
+
+   const Home: NextPage = () => {
+   ```
 
 ### 解説
 
@@ -183,6 +183,7 @@ const mock0: Todo = {
 次に、作成したモックデータを以下のように壊してみます。するとエラー文が出てくるはずです。
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```diff
 const mock0: Todo = {
   id: 0,
@@ -191,7 +192,9 @@ const mock0: Todo = {
   isDone: false,
 };
 ```
+
 <span class="code-filename">エラー文</span>
+
 ```
 Type '{ id: number; name: string; place: string; isDone: false; }' is not assignable to type 'Todo'.
 ```
@@ -228,29 +231,49 @@ const mockTodoList: Todo[];
 
 1. ステート todoList を作る
    コードを追加してください。
-   
-    <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    export const Home: VFC = () => {
-    +  const [todoList, setTodoList] = useState(mockTodoList)
-    ```
+   <span class="code-filename">pages/index.tsx</span>
 
-2.  todoList の中身を表示するコードを追加してください。
+   ```diff
+   export const Home: VFC = () => {
+   +  const [todoList, setTodoList] = useState(mockTodoList)
+   ```
 
-    <span class="code-filename">pages/index.tsx</span>
+2. todoList の中身を表示するコードを追加してください。
 
-    ```diff
-    <main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
-    +   <ul>
-    +     {todoList.map((todo) => (
-    +        <li key={todo.id} className="flex gap-2">
-    +          {todo.name}
-    +        </li>
-    +      ))}
-    +   </ul>
-    </main>
-    ```
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+   <main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
+   + <table className="text-sm text-left text-gray-500 table-auto">
+   +   <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+   +     <tr>
+   +       <th className="py-4 px-6">ステータス</th>
+   +       <th className="py-4 px-6">名前</th>
+   +       <th></th>
+   +       <th className="py-4 px-6"></th>
+   +     </tr>
+   +   </thead>
+   +   <tbody>
+   +     {todoList.map((todo) => (
+   +       <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+   +        <td></td>
+   +         <td className="py-4 px-6">
+   +           <p
+   +             className="w-40"
+   +             style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+   +           >
+   +             {todo.name}
+   +           </p>
+   +         </td>
+   +         <td></td>
+   +         <td></td>
+   +       </tr>
+   +     ))}
+   +   </tbody>
+   + </table>
+   </main>
+   ```
 
 ### 解説
 
@@ -286,7 +309,21 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 
 ```typescript
 {
-  todoList.map((todo) => <li key={todo.id}>{todo.name}</li>);
+  todoList.map((todo) => (
+    <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          {todo.name}
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+    </tr>
+  ));
 }
 ```
 
@@ -294,9 +331,45 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 
 ```typescript
 {[
-  <li key={mock0.id}>{mock0.name}</li>
-  <li key={mock1.id}>{mock1.name}</li>
-  <li key={mock2.id}>{mock2.name}</li>
+  <tr key={0}>
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          髪を切りに行く
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+  </tr>
+  <tr key={1}>
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          プレゼントを選ぶ
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+  </tr>
+  <tr key={2}>
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          映画館デートする
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+  </tr>
 ]}
 ```
 
@@ -307,17 +380,17 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 ```typescript
 const function0 = (todo) => {
   return (
-    <li key={todo.id} className="flex gap-2">
-      {todo.name}
-    </li>
+    <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+      // 省略
+    </tr>
   );
 };
 
 // 省略形
 const function1 = (todo) => (
-  <li key={todo.id} className="flex gap-2">
-    {todo.name}
-  </li>
+  <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+    // 省略
+  </tr>
 );
 ```
 
@@ -375,25 +448,23 @@ const function1 = (todo) => (
 
 1. 入力フォームの追加
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    <main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
-      <ul>
-        {todoList.map((todo) => (
-          <li key={todo.id} className="flex gap-2">
-            {todo.name}
-          </li>
-        ))}
-      </ul>
-    +  <input type="text" className="border"/>
-    </main>
-    ```
+   ```diff
+   <main className="flex flex-col justify-center items-center py-4 px-8 m-0 min-h-screen">
+   +  <input type="text" className="border" />
+     <table>
+       {todoList.map((todo) => (
+        // 省略
+       ))}
+     </table>
+   </main>
+   ```
 
 2. フォームにされた内容をステート text で管理する
 
-    <span class="code-filename">pages/index.tsx</span>
-    
+   <span class="code-filename">pages/index.tsx</span>
+
    ```diff
    const Home: NextPage = () => {
      const [todoList, setTodoList] = useState(mockTodoList)
@@ -405,10 +476,11 @@ const function1 = (todo) => (
    ```
 
    先程、作成したフォームを以下のように修正してください。
-    
-    <span class="code-filename">pages/index.tsx</span>
+
+   <span class="code-filename">pages/index.tsx</span>
+
    ```diff
-   -  <input type="text" />
+   -  <input type="text" className="border"/>
    +   <input
    +     type="text"
    +     value={text}
@@ -453,6 +525,7 @@ type Props = {
 具体例を見ます。下のコードをコンポーネントの `return` 以下に追加してください。ローカルホストで開発者ツールの Console を開き、作成したフォームに入力します。Console に入力中の内容が表示されるはずです。
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```typescript
 <input
   className="border-2 border-red-500"
@@ -487,6 +560,7 @@ const Home: NextPage = () => {
 先程のコードを以下のように変更します。
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```diff
 <input
 +  value={demo}
@@ -508,6 +582,7 @@ const Home: NextPage = () => {
 今回の実装を観察します。先程までの解説とほとんど同じですが、`onChange` に直接関数を書いて渡すのではなく、`handleChangeInput`という関数名を渡しています。`onChange` に渡される引数の型が `e: React.ChangeEvent<HTMLInputElement>` と指定されているところも確認してください。
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```typescript
 const [text, setText] = useState("");
 const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -519,6 +594,7 @@ type Props = { onChange: (event: React.ChangeEvent<HTMLInputElement>) => void };
 ```
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```typescript
 <input
   type="text"
@@ -542,6 +618,7 @@ const Home: NextPage = () => {
 ```
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```diff
 - <input
 -   value={demo}
@@ -559,17 +636,30 @@ const Home: NextPage = () => {
 
 1. 登録ボタンの追加
 
-    <span class="code-filename">pages/index.tsx</span>
-    ```diff
-      <input type="text" className="border"/>
-    +  <button>Todoに登録</button>
+   <span class="code-filename">pages/index.tsx</span>
 
-    </main>
-    ```
+   ```diff
+   <main>
+   + <div className="flex flex-col gap-2 py-10">
+      <input
+        type="text"
+        value={text}
+        onChange={handleChangeInput}
+        className="border"
+      />
+    +  <button
+    +    className="py-2 px-4 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded border-b-4 border-blue-700 hover:border-blue-500"
+    +    disabled={text === ""}
+    +   >
+    +     Todo登録
+    +   </button>
+    + </div>
+   ```
 
-2. ファイル末尾に以下のコードを追加してください
+2. 以下のコードを追加してください
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
+
    ```diff
    + let nextId = 3
 
@@ -578,7 +668,8 @@ const Home: NextPage = () => {
 
 3. 入力内容を Todo に登録する
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
+
    ```diff
    const Home: NextPage = () => {
      const [todoList, setTodoList] = useState<Todo[]>(mockTodoList)
@@ -603,10 +694,16 @@ const Home: NextPage = () => {
 
    先程作成したボタンを以下のように修正してください。
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
+
    ```diff
-   - <button>Todoに登録</button>
-   + <button onClick={() => register(text)}>Todoに登録</button>
+   <button
+   +  onClick={register}
+     className="py-2 px-4 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded border-b-4 border-blue-700 hover:border-blue-500"
+     disabled={text === ""}
+   >
+     Todo登録
+   </button>
    ```
 
 ### 解説
@@ -750,39 +847,56 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 
 1. 削除ボタンの作成
 
-    <span class="code-filename">pages/index.tsx</span>
-    
-    ```diff
-    <ul>
-    {todoList.map((todo) => (
-      <li key={todo.id} className="flex gap-2">
-        <p>{todo.name}</p>
-    +    <button>削除</button>
-      </li>
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+   {todoList.map((todo) => (
+      <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+        <td></td>
+        <td className="py-4 px-6">
+          <p
+            className="w-40"
+            style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+          >
+            {todo.name}
+          </p>
+        </td>
+        <td></td>
+        <td className="py-4 px-6">
+    +      <button className="py-2 px-4 font-bold text-white bg-red-500 rounded">
+    +        削除
+    +      </button>
+    +    </td>
+      </tr>
     ))}
-    </ul>
-    ```
+   ```
 
 2. remove 関数の用意
 
-    <span class="code-filename">pages/index.tsx</span>
-    
-    ```diff
-    const register = () => {
-      // 省略
-      }
+   <span class="code-filename">pages/index.tsx</span>
 
-    + const remove = (id: number) => {
-    +     const newState = todoList.filter((todo) => todo.id !== id)
-    +     setTodoList(newState)
-    +   }
-    ```
+   ```diff
+   const register = () => {
+     // 省略
+     }
 
-    <span class="code-filename">pages/index.tsx</span>
-    ```diff
-    -    <button>削除</button>
-    +    <button onClick={() => remove(todo.id)}>削除</button>
-    ```
+   + const remove = (id: number) => {
+   +     const newState = todoList.filter((todo) => todo.id !== id)
+   +     setTodoList(newState)
+   +   }
+   ```
+
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+   - <button className="py-2 px-4 font-bold text-white bg-red-500 rounded">
+   + <button
+   +    onClick={() => remove(todo.id)}
+   +    className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+   + >
+      削除
+    </button>
+   ```
 
 ### 解説
 
@@ -793,33 +907,39 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
-<ul>
-  {todoList.map((todo) => (
-    <li key={todo.id} className="flex gap-2">
-      <p>{todo.name}</p>
-      <button onClick={() => remove(todo.id)}>削除</button>
-    </li>
-  ))}
-</ul>
+{
+  todoList.map((todo) => (
+    <button
+      onClick={() => remove(todo.id)}
+      className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+    >
+      {todo.name}
+    </button>
+  ));
+}
 ```
 
 `todoList` が初期状態の場合、上記コードを map を使わないで書くと、以下のようになります。各 Todo が削除ボタンを持ちます。 `onClick` 内の `remove` は Todo の `id` を引数として受け取っています。
 
 ```typescript
-<ul>
-  <li key=0 className="flex gap-2">
-    <p>髪を切りに行く</p>
-    <button onClick={() => remove(0)}>削除</button>
-  </li>
-  <li key=1 className="flex gap-2">
-    <p>プレゼントを選ぶ</p>
-    <button onClick={() => remove(1)}>削除</button>
-  </li>
-  <li key=2 className="flex gap-2">
-    <p>映画館デートする</p>
-    <button onClick={() => remove(2)}>削除</button>
-  </li>
-</ul>
+<button
+  onClick={() => remove(0)}
+  className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+>
+  髪を切りに行く
+</button>
+<button
+  onClick={() => remove(1)}
+  className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+>
+  プレゼントを選ぶ
+</button>
+<button
+  onClick={() => remove(2)}
+  className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+>
+  映画館デートする
+</button>
 ```
 
 #### filter 関数
@@ -866,50 +986,56 @@ const remove = (id: number) => {
 
 1. 完了チェックボックスの用意
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    <li
-      key={todo.id}
-    +  style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-      className="flex gap-4 p-4"
-    >
-    +  <input
-    +    type="checkbox"
-    +    checked={todo.isDone}
-    +  />
-      <p>{todo.name}</p>
-      <button onClick={() => remove(todo.id)}>削除</button>
-    </li>
-    ```
+   ```diff
+   {todoList.map((todo) => (
+      <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+    -    <td></td>
+    +    <td className="py-4 px-6">
+    +      <input
+    +        type="checkbox"
+    +        checked={todo.isDone}
+    +      />
+    +    </td>
+        <td className="py-4 px-6">
+          <p
+            className="w-40"
+            style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+          >
+            {todo.name}
+          </p>
+        </td>
+   ```
 
 2. toggle 関数の作成
 
-    <span class="code-filename">pages/index.tsx</span>
-    ```diff
-    const remove = (id: number) => {
-      // 省略
-    };
+   <span class="code-filename">pages/index.tsx</span>
 
-    + const toggle = (id: number) => {
-    +   const newState = todoList.map((todo) => {
-    +     if (todo.id !== id) return todo;
-    +     return { ...todo, isDone: !todo.isDone };
-    +   });
-    +
-    +   setTodoList(newState);
-    + };
-    ```
+   ```diff
+   const remove = (id: number) => {
+     // 省略
+   };
 
-    <span class="code-filename">pages/index.tsx</span>
+   + const toggle = (id: number) => {
+   +   const newState = todoList.map((todo) => {
+   +     if (todo.id !== id) return todo;
+   +     return { ...todo, isDone: !todo.isDone };
+   +   });
+   +
+   +   setTodoList(newState);
+   + };
+   ```
 
-    ```diff
-      <input
-        type="checkbox"
-        checked={todo.isDone}
-    +    onChange={() => toggle(todo.id)}
-      />
-    ```
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+     <input
+       type="checkbox"
+       checked={todo.isDone}
+   +    onChange={() => toggle(todo.id)}
+     />
+   ```
 
 ### 解説
 
@@ -927,6 +1053,7 @@ const remove = (id: number) => {
 mock0 の `isDone` を `false` から `true` に変えて、ローカルホストを確認してみましょう。
 
 <span class="code-filename">pages/index.tsx</span>
+
 ```diff
 const mock0: Todo = {
   id: 0,
@@ -1012,34 +1139,50 @@ const toggle = (id: number) => {
 
 1. クリアボタンの作成
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-      <button onClick={register}>登録</button>
-    + <button>完了したタスクを一掃</button>
-    </main>
-    ```
+   ```diff
+   <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+    <tr>
+      <th className="py-4 px-6">ステータス</th>
+      <th className="py-4 px-6">名前</th>
+      <th></th>
+   +   <th className="py-4 px-6">
+   +     <button
+   +       className="py-2 px-4 font-bold text-white bg-gray-700 hover:bg-gray-900 rounded"
+   +     >
+   +       一掃
+   +     </button>
+      </th>
+    </tr>
+   </thead>
+   ```
 
 2. clear 関数の作成
 
-    <span class="code-filename">pages/index.tsx</span>
-    ```diff
-    const toggle = () => {
-      // 省略
-    };
+   <span class="code-filename">pages/index.tsx</span>
 
-    + const clear = () => {
-    +   const newState = todoList.filter((todo) => !todo.isDone);
-    +   setTodoList(newState);
-    + };
-    ```
+   ```diff
+   const toggle = () => {
+     // 省略
+   };
 
-    <span class="code-filename">pages/index.tsx</span>
+   + const clear = () => {
+   +   const newState = todoList.filter((todo) => !todo.isDone);
+   +   setTodoList(newState);
+   + };
+   ```
 
-    ```diff
-    - <button>完了したタスクを一掃</button>
-    + <button onClick={clear}>完了したタスクを一掃</button>
-    ```
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+   <button
+   +   onClick={clear}
+      className="py-2 px-4 font-bold text-white bg-gray-700 hover:bg-gray-900 rounded"
+    >
+      一掃
+    </button>
+   ```
 
 ## Todo コンポーネントの作成
 
@@ -1050,121 +1193,168 @@ const toggle = (id: number) => {
 1. Todo コンポーネントを作成する
    まず、Home コンポーネントの上に、Todo コンポーネントを作ります。
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    + const Todo = () => {
-    +   return (
-    +   );
-    + };
+   ```diff
+   + const Todo = () => {
+   +   return (
+   +   );
+   + };
 
-    const Home: NextPage = () => {
-    ```
+   const Home: NextPage = () => {
+   ```
 
-    次に、Home コンポーネントの以下の箇所を切り取ります。
-    
-    <span class="code-filename">pages/index.tsx</span>
+   次に、Home コンポーネントの以下の箇所(行頭が `-` のコード)を切り取ります。
 
-    ```diff
-    <ul>
-      {todoList.map((todo) => (
-    -    <li
-    -      key={todo.id}
-    -      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-    -      className="flex gap-4 p-4"
-    -    >
-    -      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-    -      <p>{todo.name}</p>
-    -      <button onClick={remove(todo.id)}>削除</button>
-    -    </li>
-      ))}
-    </ul>
-    ```
+   <span class="code-filename">pages/index.tsx</span>
 
-    切り取った部分を、Todo コンポーネントに貼り付けます。
-    
-    <span class="code-filename">pages/index.tsx</span>
+   ```diff
+   <tbody>
+     {todoList.map((todo) => (
+   -   <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+   -           <td className="py-4 px-6">
+   -             <input
+   -               type="checkbox"
+   -               checked={todo.isDone}
+   -               onChange={() => toggle(todo.id)}
+   -             />
+   -           </td>
+   -           <td className="py-4 px-6">
+   -             <p
+   -               className="w-40"
+   -               style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+   -             >
+   -               {todo.name}
+   -             </p>
+   -           </td>
+   -           <td></td>
+   -           <td className="py-4 px-6">
+   -             <button
+   -               onClick={() => remove(todo.id)}
+   -               className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+   -             >
+   -               削除
+   -             </button>
+   -           </td>
+   -         </tr>
+     ))}
+   </tbody>
+   ```
 
-    ```diff
-    const Todo = () => {
-      return (
-    +    <li
-    +      key={todo.id}
-    +      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-    +      className="flex gap-4 p-4"
-    +    >
-    +      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-    +      <p>{todo.name}</p>
-    +      <button onClick={remove(todo.id)}>削除</button>
-    +    </li>
-      );
-    };
-    ```
+   切り取った部分を、Todo コンポーネントに貼り付けます。
 
-    `todo` `remove` `toggle` の部分にでエラーが出ていたら正解です。
+   <span class="code-filename">pages/index.tsx</span>
 
-    エラーが出ているのは、Todo コンポーネントの中で`todo`     `remove` `toggle`を呼び出しても、Todo コンポーネント内にこれらに対応するものがないからです。今から、親コンポーネント（Home）から子コンポーネント（Todo）へ、`todo` `remove` `toggle` が渡せるようにします。（詳しくは解説で）
+   ```diff
+   const Todo = () => {
+     return (
+   +   <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+   +     <td className="py-4 px-6">
+   +       <input
+   +         type="checkbox"
+   +         checked={todo.isDone}
+   +         onChange={() => toggle(todo.id)}
+   +       />
+   +     </td>
+   +     <td className="py-4 px-6">
+   +       <p
+   +         className="w-40"
+   +         style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+   +       >
+   +         {todo.name}
+   +       </p>
+   +     </td>
+   +     <td></td>
+   +     <td className="py-4 px-6">
+   +       <button
+   +         onClick={() => remove(todo.id)}
+   +         className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+   +       >
+   +         削除
+   +       </button>
+   +     </td>
+   +   </tr>
+     );
+   };
+   ```
+
+   `todo` `remove` `toggle` の部分にでエラーが出ていたら正解です。
+
+   エラーが出ているのは、Todo コンポーネントの中で`todo` `remove` `toggle`を呼び出しても、Todo コンポーネント内にこれらに対応するものがないからです。今から、親コンポーネント（Home）から子コンポーネント（Todo）へ、`todo` `remove` `toggle` が渡せるようにします。（詳しくは解説で）
 
 2. Todo コンポーネントのインターフェイスを作る
    TodoProps という名前のインターフェイスを作ります。
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    + interface TodoProps {
-    +  todo: Todo;
-    +  onToggle: () => void;
-    +  onRemove: () => void;
-    + }
+   ```diff
+   + interface TodoProps {
+   +  todo: Todo;
+   +  onToggle: () => void;
+   +  onRemove: () => void;
+   + }
 
-    const Todo = () => {
-    ```
+   const Todo = () => {
+   ```
 
-    次に、以下のように修正してください。
+   次に、以下のように修正してください。
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    - const Todo = () => {
-    + const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
-    ```
+   ```diff
+   - const Todo = () => {
+   + const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+   ```
 
-    `return` の中も、以下のように修正してください。先程までのエラーが消えるはずです。
-    
-    <span class="code-filename">pages/index.tsx</span>
+   `return` の中も、以下のように修正してください。先程までのエラーが消えるはずです。
 
-    ```diff
-    return (
-        <li
-          key={todo.id}
-          style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-          className="flex gap-4 p-4"
-        >
-    -      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-    +      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-          <p>{todo.name}</p>
-    -      <button onClick={remove(todo.id)}>削除</button>
-    +      <button onClick={onRemove}>削除</button>
-        </li>
-      );
-    ```
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+   return (
+     <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+       <td className="py-4 px-6">
+   -      <input type="checkbox" checked={todo.isDone} onChange={() => toggle(todo.id)} />
+   +      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+       </td>
+       <td className="py-4 px-6">
+         <p
+           className="w-40"
+           style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+         >
+           {todo.name}
+         </p>
+       </td>
+       <td className="py-4 px-6"></td>
+       <td className="py-4 px-6">
+         <button
+   -        onClick={() => remove(todo.id)}
+   +        onClick={onRemove}
+           className="py-2 px-4 font-bold text-white bg-red-500 hover:bg-red-700 rounded"
+         >
+           削除
+         </button>
+       </td>
+     </tr>
+   );
+   ```
 
 3. Home コンポーネントの中で Todo コンポーネントを呼び出す
    ローカルホストで挙動を確認して下しさい。
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    <ul>
-      {todoList.map((todo) => (
-    +    <Todo
-    +      key={todo.id}
-    +      todo={todo}
-    +      onRemove={() => remove(todo.id)}
-    +      onToggle={() => toggle(todo.id)}
-    +    />
-      ))}
-    </ul>
-    ```
+   ```diff
+   <tbody>
+     {todoList.map((todo) => (
+   +    <Todo
+   +      key={todo.id}
+   +      todo={todo}
+   +      onRemove={() => remove(todo.id)}
+   +      onToggle={() => toggle(todo.id)}
+   +    />
+     ))}
+   </tbody>
+   ```
 
 ### 解説
 
@@ -1199,7 +1389,7 @@ const 大文字で始める関数名 = (引数) => {
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
-<ul>
+<tbody>
   {todoList.map((todo) => (
     <Todo
       key={todo.id}
@@ -1208,7 +1398,7 @@ const 大文字で始める関数名 = (引数) => {
       onToggle={() => toggle(todo.id)}
     />
   ))}
-</ul>
+</tbody>
 ```
 
 Props は、`todo` や `onRemove`、`onToggle`になります。例えば、 Home コンポーネントから Todo コンポーネントの `onRemove` に渡された `() => remove(todo.id)` は、Todo コンポーネントの中で`onRemove`として呼び出すことが可能になります。
@@ -1218,17 +1408,30 @@ Todo コンポーネントを確認します。削除ボタンの `onClick` に 
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
-const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+const Todo = ({ todo, onToggle, onRemove }: Props) => {
+  s;
   return (
-    <li
-      key={todo.id}
-      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-      className="flex gap-4 p-4"
-    >
-      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-      <p>{todo.name}</p>
-      <button onClick={onRemove}>削除</button>
-    </li>
+    <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+      <td className="py-4 px-6">
+        <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+      </td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          {todo.name}
+        </p>
+      </td>
+      <td className="py-4 px-6">
+        <button
+          onClick={onRemove}
+          className="py-2 px-4 font-bold text-white bg-red-500 hover:bg-red-700 rounded"
+        >
+          削除
+        </button>
+      </td>
+    </tr>
   );
 };
 ```
@@ -1263,44 +1466,68 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
 
 1. 編集モードを作成する
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
-    +  const [isEditing, setIsEditing] = useState(false)
+   ```diff
+   const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
+   +  const [isEditing, setIsEditing] = useState(false)
 
-    +  const startEditing = () => setIsEditing(true)
-    +  const finishEditing = () => setIsEditing(false)
-    ```
+   +  const startEditing = () => setIsEditing(true)
+   +  const finishEditing = () => setIsEditing(false)
+   ```
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    return (
-    +  <>
-    +    {isEditing ? (
-    +      <li>
-    +        <input
-    +          defaultValue={todo.name}
-    +          className="border"
-    +        />
-    +        <button onClick={finishEditing}>編集終了</button>
-    +      </li>
-    +    ) : (
-          <li
-            key={todo.id}
-            style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-            className="flex gap-4 p-4"
-          >
+   ```diff
+   return (
+   + <>
+   +   {isEditing ? (
+   +     <tr className="bg-white dark:bg-gray-800 border-b">
+   +       <td></td>
+   +       <td className="py-4 px-6">
+   +         <input
+   +           type="text"
+   +           className="border"
+   +           value={todo.name}
+   +         />
+   +       </td>
+   +       <td className="py-4 px-6">
+   +         <button
+   +           onClick={finishEditing}
+   +           className="py-2 px-4 font-bold text-white bg-green-500 hover:bg-green-700 rounded"
+   +         >
+   +           編集終了
+   +         </button>
+   +       </td>
+   +       <td className="py-4 px-6">
+   +         <button
+   +           onClick={onRemove}
+   +           className="py-2 px-4 font-bold text-white bg-red-500 rounded opacity-50 cursor-not-allowed"
+   +           disabled
+   +         >
+   +           削除
+   +         </button>
+   +       </td>
+   +     </tr>
+   +   ) : (
+        <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+          <td className="py-4 px-6">
             <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-            <p>{todo.name}</p>
-            <button onClick={startEditing}>編集</button>
-            <button onClick={onRemove}>削除</button>
-          </li>
-    +    )}
-    +  </>
-    );
-    ```
+          </td>
+          <td className="py-4 px-6">
+            <p
+              className="w-40"
+              style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+            >
+              {todo.name}
+            </p>
+          </td>
+          <!-- 省略 -->
+        </tr>
+   +   )}
+   + </>
+   )
+   ```
 
 ### 解説
 
@@ -1335,80 +1562,82 @@ return (
 
 1. 反映する関数を作り、Prop として Todo コンポーネントにわたす
    まず、 Home コンポーネント内に `edit` を作ります。
-   
+
    <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    const clear = () => {
-      // 省略
-    };
+   ```diff
+   const clear = () => {
+     // 省略
+   };
 
-    + const edit = (id: number) => (name: string) => {
-    +   const newState = todoList.map((todo) => {
-    +     if (todo.id !== id) return todo;
-    +     return { ...todo, name: name };
-    +   });
-    +
-    +   setTodoList(newState);
-    + };
-    ```
+   + const edit = (id: number) => (name: string) => {
+   +   const newState = todoList.map((todo) => {
+   +     if (todo.id !== id) return todo;
+   +     return { ...todo, name: name };
+   +   });
+   +
+   +   setTodoList(newState);
+   + };
+   ```
 
-    `edit` を Todo コンポーネントに渡せるように、インターフェイスを変更します。
-    
-    <span class="code-filename">pages/index.tsx</span>
-    
-    ```diff
-    interface TodoProps {
-      todo: Todo
-      onToggle: () => void
-      onRemove: () => void
-    +  onEdit: (name: string) => void
-    }
+   `edit` を Todo コンポーネントに渡せるように、インターフェイスを変更します。
 
-    - const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
-    + const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
-    ```
+   <span class="code-filename">pages/index.tsx</span>
 
-    `edit` を Todo コンポーネントの `onEdit` に渡します。
-    
-    <span class="code-filename">pages/index.tsx</span>
-    
-    ```diff
-    <Todo
-      key={todo.id}
-      todo={todo}
-      onRemove={() => remove(todo.id)}
-      onToggle={() => toggle(todo.id)}
-    +  onEdit={edit(todo.id)}
-    />
-    ```
+   ```diff
+   interface TodoProps {
+     todo: Todo
+     onToggle: () => void
+     onRemove: () => void
+   +  onEdit: (name: string) => void
+   }
+
+   - const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+   + const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
+   ```
+
+   `edit` を Todo コンポーネントの `onEdit` に渡します。
+
+   <span class="code-filename">pages/index.tsx</span>
+
+   ```diff
+   <Todo
+     key={todo.id}
+     todo={todo}
+     onRemove={() => remove(todo.id)}
+     onToggle={() => toggle(todo.id)}
+   +  onEdit={edit(todo.id)}
+   />
+   ```
 
 2. 編集フォームへの入力内容が反映されるようにする
 
-    <span class="code-filename">pages/index.tsx</span>
+   <span class="code-filename">pages/index.tsx</span>
 
-    ```diff
-    const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
-      const [isEditing, setIsEditing] = useState(false)
+   ```diff
+   const Todo = ({ todo, onToggle, onRemove, onEdit }: TodoProps) => {
+     const [isEditing, setIsEditing] = useState(false)
 
-    +  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    +    onEdit(e.target.value)
-    +  }
-    ```
+   +  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+   +    onEdit(e.target.value)
+   +  }
+   ```
 
+   <span class="code-filename">pages/index.tsx</span>
 
-    <span class="code-filename">pages/index.tsx</span>
-
-    ```diff
-    <li>
-      <input
-    +    onChange={handleChangeInput}
-        defaultValue={todo.name}
-        className="border"
-      />
-      <button onClick={finishEditing}>編集終了</button>
-    </li>
-    ```
+   ```
+    {isEditing ? (
+    <tr className="bg-white dark:bg-gray-800 border-b">
+      <td className="py-4 px-6"></td>
+      <td className="py-4 px-6">
+        <input
+          type="text"
+    +      onChange={handleChangeInput}
+          className="border"
+          value={todo.name}
+        />
+      </td>
+   ```
 
 ### 解説
 
@@ -1480,8 +1709,8 @@ const passedFunction = (name: string) => {
 
 ```typescript
 interface TodoProps {
- // 省略
-  onEdit: (name: string) => void
+  // 省略
+  onEdit: (name: string) => void;
 }
 ```
 
