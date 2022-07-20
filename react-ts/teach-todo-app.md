@@ -1288,10 +1288,10 @@ const toggle = (id: number) => {
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
-   + interface TodoProps {
-   +  todo: Todo;
-   +  onToggle: () => void;
-   +  onRemove: () => void;
+   + interface Props {
+   + todo: Todo
+   + onToggle: (id: number) => void
+   + onRemove: (id: number) => void
    + }
 
    const Todo = () => {
@@ -1315,7 +1315,7 @@ const toggle = (id: number) => {
      <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
        <td className="py-4 px-6">
    -      <input type="checkbox" checked={todo.isDone} onChange={() => toggle(todo.id)} />
-   +      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+   +      <input type="checkbox" checked={todo.isDone} onChange={() => onToggle(todo.id)} />
        </td>
        <td className="py-4 px-6">
          <p
@@ -1329,7 +1329,7 @@ const toggle = (id: number) => {
        <td className="py-4 px-6">
          <button
    -        onClick={() => remove(todo.id)}
-   +        onClick={onRemove}
+   +        onClick={() => onRemove(todo.id)}
            className="py-2 px-4 font-bold text-white bg-red-500 hover:bg-red-700 rounded"
          >
            削除
@@ -1349,8 +1349,8 @@ const toggle = (id: number) => {
    +    <Todo
    +      key={todo.id}
    +      todo={todo}
-   +      onRemove={() => remove(todo.id)}
-   +      onToggle={() => toggle(todo.id)}
+   +      onRemove={remove}
+   +      onToggle={toggle}
    +    />
      ))}
    </tbody>
@@ -1391,19 +1391,14 @@ const 大文字で始める関数名 = (引数) => {
 ```typescript
 <tbody>
   {todoList.map((todo) => (
-    <Todo
-      key={todo.id}
-      todo={todo}
-      onRemove={() => remove(todo.id)}
-      onToggle={() => toggle(todo.id)}
-    />
+    <Todo key={todo.id} todo={todo} onRemove={remove} onToggle={toggle} />
   ))}
 </tbody>
 ```
 
-Props は、`todo` や `onRemove`、`onToggle`になります。例えば、 Home コンポーネントから Todo コンポーネントの `onRemove` に渡された `() => remove(todo.id)` は、Todo コンポーネントの中で`onRemove`として呼び出すことが可能になります。
+Props は、`todo` や `onRemove`、`onToggle`になります。例えば、 Home コンポーネントから Todo コンポーネントの `onRemove` に渡された `remove` は、Todo コンポーネントの中で`onRemove`として呼び出すことが可能になります。
 
-Todo コンポーネントを確認します。削除ボタンの `onClick` に `onRemove` が渡されていますね。
+Todo コンポーネントを確認します。削除ボタンの `onClick` 内の処理で`onRemove` が呼び出されています。
 
 <span class="code-filename">pages/index.tsx</span>
 
@@ -1413,7 +1408,11 @@ const Todo = ({ todo, onToggle, onRemove }: Props) => {
   return (
     <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
       <td className="py-4 px-6">
-        <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+        <input
+          type="checkbox"
+          checked={todo.isDone}
+          onChange={() => onToggle(todo.id)}
+        />
       </td>
       <td className="py-4 px-6">
         <p
@@ -1425,7 +1424,7 @@ const Todo = ({ todo, onToggle, onRemove }: Props) => {
       </td>
       <td className="py-4 px-6">
         <button
-          onClick={onRemove}
+          onClick={() => onRemove(todo.id)}
           className="py-2 px-4 font-bold text-white bg-red-500 hover:bg-red-700 rounded"
         >
           削除
@@ -1438,15 +1437,15 @@ const Todo = ({ todo, onToggle, onRemove }: Props) => {
 
 #### インターフェイス
 
-インターフェイスとは、Props の型の集合です。インターフェイスを定義することで、子コンポーネントが親から受け取る Props の型を定義できます。実装を確認します。`TodoProps` は、「`todo` は Todo」「`onToggle` は引数無しで void を返す関数」「`onRemove` は 引数無しで void を返す関数」という Props の型定義の集合です。
+インターフェイスとは、Props の型の集合です。インターフェイスを定義することで、子コンポーネントが親から受け取る Props の型を定義できます。実装を確認します。`TodoProps` は、「`todo` は Todo」「`onToggle` は number 型の引数を受け取り void を返す関数」「`onRemove` は number 型の引数を受け取り void を返す関数」という Props の型定義の集合です。
 
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
 interface TodoProps {
   todo: Todo;
-  onToggle: () => void;
-  onRemove: () => void;
+  onToggle: (id: number) => void
+  onRemove: (id: number) => void
 }
 
 const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
@@ -1501,7 +1500,7 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
    +       </td>
    +       <td className="py-4 px-6">
    +         <button
-   +           onClick={onRemove}
+   +           onClick={() => onRemove(todo.id)}
    +           className="py-2 px-4 font-bold text-white bg-red-500 rounded opacity-50 cursor-not-allowed"
    +           disabled
    +         >
@@ -1512,7 +1511,7 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
    +   ) : (
         <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
           <td className="py-4 px-6">
-            <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+            <input type="checkbox" checked={todo.isDone} onChange={() => onToggle(todo.id)} />
           </td>
           <td className="py-4 px-6">
             <p
@@ -1587,9 +1586,9 @@ return (
    ```diff
    interface TodoProps {
      todo: Todo
-     onToggle: () => void
-     onRemove: () => void
-   +  onEdit: (name: string) => void
+     onToggle: (id: number) => void
+     onRemove: (id: number) => void
+   +  onEdit: (id: number, name: string) => void
    }
 
    - const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
@@ -1604,9 +1603,9 @@ return (
    <Todo
      key={todo.id}
      todo={todo}
-     onRemove={() => remove(todo.id)}
-     onToggle={() => toggle(todo.id)}
-   +  onEdit={edit(todo.id)}
+     onRemove={remove}
+     onToggle={toggle}
+   +  onEdit={edit}
    />
    ```
 
