@@ -933,18 +933,23 @@ const remove = (id: number) => {
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
-   <li
-     key={todo.id}
-   +  style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-     className="flex gap-4 p-4"
-   >
-   +  <input
-   +    type="checkbox"
-   +    checked={todo.isDone}
-   +  />
-     <p>{todo.name}</p>
-     <button onClick={() => remove(todo.id)}>削除</button>
-   </li>
+   {todoList.map((todo) => (
+      <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+    -    <td></td>
+    +    <td className="py-4 px-6">
+    +      <input
+    +        type="checkbox"
+    +        checked={todo.isDone}
+    +      />
+    +    </td>
+        <td className="py-4 px-6">
+          <p
+            className="w-40"
+            style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+          >
+            {todo.name}
+          </p>
+        </td>
    ```
 
 2. toggle 関数の作成
@@ -1081,9 +1086,20 @@ const toggle = (id: number) => {
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
-     <button onClick={register}>登録</button>
-   + <button>完了したタスクを一掃</button>
-   </main>
+   <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+    <tr>
+      <th className="py-4 px-6">ステータス</th>
+      <th className="py-4 px-6">名前</th>
+      <th></th>
+   +   <th className="py-4 px-6">
+   +     <button
+   +       className="py-2 px-4 font-bold text-white bg-gray-700 hover:bg-gray-900 rounded"
+   +     >
+   +       一掃
+   +     </button>
+      </th>
+    </tr>
+   </thead>
    ```
 
 2. clear 関数の作成
@@ -1104,8 +1120,12 @@ const toggle = (id: number) => {
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
-   - <button>完了したタスクを一掃</button>
-   + <button onClick={clear}>完了したタスクを一掃</button>
+   <button
+   +   onClick={clear}
+      className="py-2 px-4 font-bold text-white bg-gray-700 hover:bg-gray-900 rounded"
+    >
+      一掃
+    </button>
    ```
 
 ## Todo コンポーネントの作成
@@ -1128,22 +1148,39 @@ const toggle = (id: number) => {
    const Home: NextPage = () => {
    ```
 
-   次に、Home コンポーネントの以下の箇所を切り取ります。
+   次に、Home コンポーネントの以下の箇所(行頭が `-` のコード)を切り取ります。
 
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
    <ul>
      {todoList.map((todo) => (
-   -    <li
-   -      key={todo.id}
-   -      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-   -      className="flex gap-4 p-4"
-   -    >
-   -      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-   -      <p>{todo.name}</p>
-   -      <button onClick={remove(todo.id)}>削除</button>
-   -    </li>
+   -   <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+   -           <td className="py-4 px-6">
+   -             <input
+   -               type="checkbox"
+   -               checked={todo.isDone}
+   -               onChange={() => toggle(todo.id)}
+   -             />
+   -           </td>
+   -           <td className="py-4 px-6">
+   -             <p
+   -               className="w-40"
+   -               style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+   -             >
+   -               {todo.name}
+   -             </p>
+   -           </td>
+   -           <td></td>
+   -           <td className="py-4 px-6">
+   -             <button
+   -               onClick={() => remove(todo.id)}
+   -               className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+   -             >
+   -               削除
+   -             </button>
+   -           </td>
+   -         </tr>
      ))}
    </ul>
    ```
@@ -1155,15 +1192,32 @@ const toggle = (id: number) => {
    ```diff
    const Todo = () => {
      return (
-   +    <li
-   +      key={todo.id}
-   +      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-   +      className="flex gap-4 p-4"
-   +    >
-   +      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
-   +      <p>{todo.name}</p>
-   +      <button onClick={remove(todo.id)}>削除</button>
-   +    </li>
+   +   <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+   +     <td className="py-4 px-6">
+   +       <input
+   +         type="checkbox"
+   +         checked={todo.isDone}
+   +         onChange={() => toggle(todo.id)}
+   +       />
+   +     </td>
+   +     <td className="py-4 px-6">
+   +       <p
+   +         className="w-40"
+   +         style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+   +       >
+   +         {todo.name}
+   +       </p>
+   +     </td>
+   +     <td></td>
+   +     <td className="py-4 px-6">
+   +       <button
+   +         onClick={() => remove(todo.id)}
+   +         className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+   +       >
+   +         削除
+   +       </button>
+   +     </td>
+   +   </tr>
      );
    };
    ```
@@ -1202,18 +1256,31 @@ const toggle = (id: number) => {
 
    ```diff
    return (
-       <li
-         key={todo.id}
-         style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-         className="flex gap-4 p-4"
-       >
-   -      <input type="checkbox" checked={todo.isDone} onChange={toggle(todo.id)} />
+     <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+       <td className="py-4 px-6">
+   -      <input type="checkbox" checked={todo.isDone} onChange={() => toggle(todo.id)} />
    +      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-         <p>{todo.name}</p>
-   -      <button onClick={remove(todo.id)}>削除</button>
-   +      <button onClick={onRemove}>削除</button>
-       </li>
-     );
+       </td>
+       <td className="py-4 px-6">
+         <p
+           className="w-40"
+           style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+         >
+           {todo.name}
+         </p>
+       </td>
+       <td className="py-4 px-6"></td>
+       <td className="py-4 px-6">
+         <button
+   -        onClick={() => remove(todo.id)}
+   +        onClick={onRemove}
+           className="py-2 px-4 font-bold text-white bg-red-500 hover:bg-red-700 rounded"
+         >
+           削除
+         </button>
+       </td>
+     </tr>
+   );
    ```
 
 3. Home コンポーネントの中で Todo コンポーネントを呼び出す
@@ -1344,29 +1411,53 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
 
    ```diff
    return (
-   +  <>
-   +    {isEditing ? (
-   +      <li>
-   +        <input
-   +          defaultValue={todo.name}
-   +          className="border"
-   +        />
-   +        <button onClick={finishEditing}>編集終了</button>
-   +      </li>
-   +    ) : (
-         <li
-           key={todo.id}
-           style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-           className="flex gap-4 p-4"
-         >
-           <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-           <p>{todo.name}</p>
-           <button onClick={startEditing}>編集</button>
-           <button onClick={onRemove}>削除</button>
-         </li>
-   +    )}
-   +  </>
-   );
+   + <>
+   +   {isEditing ? (
+   +     <tr className="bg-white dark:bg-gray-800 border-b">
+   +       <td></td>
+   +       <td className="py-4 px-6">
+   +         <input
+   +           type="text"
+   +           className="border"
+   +           value={todo.name}
+   +         />
+   +       </td>
+   +       <td className="py-4 px-6">
+   +         <button
+   +           onClick={finishEditing}
+   +           className="py-2 px-4 font-bold text-white bg-green-500 hover:bg-green-700 rounded"
+   +         >
+   +           編集終了
+   +         </button>
+   +       </td>
+   +       <td className="py-4 px-6">
+   +         <button
+   +           onClick={onRemove}
+   +           className="py-2 px-4 font-bold text-white bg-red-500 rounded opacity-50 cursor-not-allowed"
+   +           disabled
+   +         >
+   +           削除
+   +         </button>
+   +       </td>
+   +     </tr>
+   +   ) : (
+        <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+          <td className="py-4 px-6">
+            <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+          </td>
+          <td className="py-4 px-6">
+            <p
+              className="w-40"
+              style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+            >
+              {todo.name}
+            </p>
+          </td>
+          <!-- 省略 -->
+        </tr>
+   +   )}
+   + </>
+   )
    ```
 
 ### 解説
@@ -1465,15 +1556,18 @@ return (
 
    <span class="code-filename">pages/index.tsx</span>
 
-   ```diff
-   <li>
-     <input
-   +    onChange={handleChangeInput}
-       defaultValue={todo.name}
-       className="border"
-     />
-     <button onClick={finishEditing}>編集終了</button>
-   </li>
+   ```
+    {isEditing ? (
+    <tr className="bg-white dark:bg-gray-800 border-b">
+      <td className="py-4 px-6"></td>
+      <td className="py-4 px-6">
+        <input
+          type="text"
+    +      onChange={handleChangeInput}
+          className="border"
+          value={todo.name}
+        />
+      </td>
    ```
 
 ### 解説
