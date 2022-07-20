@@ -309,7 +309,21 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 
 ```typescript
 {
-  todoList.map((todo) => <li key={todo.id}>{todo.name}</li>);
+  todoList.map((todo) => (
+    <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          {todo.name}
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+    </tr>
+  ));
 }
 ```
 
@@ -317,9 +331,45 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 
 ```typescript
 {[
-  <li key={mock0.id}>{mock0.name}</li>
-  <li key={mock1.id}>{mock1.name}</li>
-  <li key={mock2.id}>{mock2.name}</li>
+  <tr key={0}>
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          髪を切りに行く
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+  </tr>
+  <tr key={1}>
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          プレゼントを選ぶ
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+  </tr>
+  <tr key={2}>
+      <td></td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          映画館デートする
+        </p>
+      </td>
+      <td></td>
+      <td></td>
+  </tr>
 ]}
 ```
 
@@ -330,17 +380,17 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
 ```typescript
 const function0 = (todo) => {
   return (
-    <li key={todo.id} className="flex gap-2">
-      {todo.name}
-    </li>
+    <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+      // 省略
+    </tr>
   );
 };
 
 // 省略形
 const function1 = (todo) => (
-  <li key={todo.id} className="flex gap-2">
-    {todo.name}
-  </li>
+  <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+    // 省略
+  </tr>
 );
 ```
 
@@ -857,33 +907,39 @@ setTodoList([mock0, mock1, mock2, newTodo]);
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
-<ul>
-  {todoList.map((todo) => (
-    <li key={todo.id} className="flex gap-2">
-      <p>{todo.name}</p>
-      <button onClick={() => remove(todo.id)}>削除</button>
-    </li>
-  ))}
-</ul>
+{
+  todoList.map((todo) => (
+    <button
+      onClick={() => remove(todo.id)}
+      className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+    >
+      {todo.name}
+    </button>
+  ));
+}
 ```
 
 `todoList` が初期状態の場合、上記コードを map を使わないで書くと、以下のようになります。各 Todo が削除ボタンを持ちます。 `onClick` 内の `remove` は Todo の `id` を引数として受け取っています。
 
 ```typescript
-<ul>
-  <li key=0 className="flex gap-2">
-    <p>髪を切りに行く</p>
-    <button onClick={() => remove(0)}>削除</button>
-  </li>
-  <li key=1 className="flex gap-2">
-    <p>プレゼントを選ぶ</p>
-    <button onClick={() => remove(1)}>削除</button>
-  </li>
-  <li key=2 className="flex gap-2">
-    <p>映画館デートする</p>
-    <button onClick={() => remove(2)}>削除</button>
-  </li>
-</ul>
+<button
+  onClick={() => remove(0)}
+  className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+>
+  髪を切りに行く
+</button>
+<button
+  onClick={() => remove(1)}
+  className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+>
+  プレゼントを選ぶ
+</button>
+<button
+  onClick={() => remove(2)}
+  className="py-2 px-4 font-bold text-white bg-red-500 rounded"
+>
+  映画館デートする
+</button>
 ```
 
 #### filter 関数
@@ -1153,7 +1209,7 @@ const toggle = (id: number) => {
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
-   <ul>
+   <tbody>
      {todoList.map((todo) => (
    -   <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
    -           <td className="py-4 px-6">
@@ -1182,7 +1238,7 @@ const toggle = (id: number) => {
    -           </td>
    -         </tr>
      ))}
-   </ul>
+   </tbody>
    ```
 
    切り取った部分を、Todo コンポーネントに貼り付けます。
@@ -1288,7 +1344,7 @@ const toggle = (id: number) => {
    <span class="code-filename">pages/index.tsx</span>
 
    ```diff
-   <ul>
+   <tbody>
      {todoList.map((todo) => (
    +    <Todo
    +      key={todo.id}
@@ -1297,7 +1353,7 @@ const toggle = (id: number) => {
    +      onToggle={() => toggle(todo.id)}
    +    />
      ))}
-   </ul>
+   </tbody>
    ```
 
 ### 解説
@@ -1333,7 +1389,7 @@ const 大文字で始める関数名 = (引数) => {
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
-<ul>
+<tbody>
   {todoList.map((todo) => (
     <Todo
       key={todo.id}
@@ -1342,7 +1398,7 @@ const 大文字で始める関数名 = (引数) => {
       onToggle={() => toggle(todo.id)}
     />
   ))}
-</ul>
+</tbody>
 ```
 
 Props は、`todo` や `onRemove`、`onToggle`になります。例えば、 Home コンポーネントから Todo コンポーネントの `onRemove` に渡された `() => remove(todo.id)` は、Todo コンポーネントの中で`onRemove`として呼び出すことが可能になります。
@@ -1352,17 +1408,30 @@ Todo コンポーネントを確認します。削除ボタンの `onClick` に 
 <span class="code-filename">pages/index.tsx</span>
 
 ```typescript
-const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
+const Todo = ({ todo, onToggle, onRemove }: Props) => {
+  s;
   return (
-    <li
-      key={todo.id}
-      style={{ backgroundColor: todo.isDone ? "red" : "white" }}
-      className="flex gap-4 p-4"
-    >
-      <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
-      <p>{todo.name}</p>
-      <button onClick={onRemove}>削除</button>
-    </li>
+    <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
+      <td className="py-4 px-6">
+        <input type="checkbox" checked={todo.isDone} onChange={onToggle} />
+      </td>
+      <td className="py-4 px-6">
+        <p
+          className="w-40"
+          style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+        >
+          {todo.name}
+        </p>
+      </td>
+      <td className="py-4 px-6">
+        <button
+          onClick={onRemove}
+          className="py-2 px-4 font-bold text-white bg-red-500 hover:bg-red-700 rounded"
+        >
+          削除
+        </button>
+      </td>
+    </tr>
   );
 };
 ```
