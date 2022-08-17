@@ -42,7 +42,7 @@ React + TypeScript で、Todo リストを作ります。
 
 ## 完成図
 
-<video src="https://drive.google.com/uc?id=1WcqTK72iIcgDrA8daXaKIoBNP_Kd8qwg" type="video/mp4" autoplay controls loop playsinline  width="640"></video>
+<video src="https://drive.google.com/uc?id=1WcqTK72iIcgDrA8daXaKIoBNP_Kd8qwg" type="video/mp4" autoplay controls playsinline  width="640"></video>
 
 ## リポジトリを用意する
 
@@ -132,7 +132,7 @@ type Todo = {
 
 #### プロパティとオブジェクト
 
-[オブジェクト]("https://jsprimer.net/basic/object/")とは、プロパティの集合です。プロパティとは名前（キー）と値（バリュー）が対になったものです。オブジェクトは、`{}`（オブジェクトリテラル）で作成します。
+[オブジェクト]("https://jsprimer.net/basic/object/")とは、プロパティの集合です。プロパティとは名前（キー）と値（バリュー）が対になったものです。オブジェクトは、`{}`（カーリーブレイス）で作成します。
 
 ```typescript
 const sampleObj = {
@@ -203,7 +203,7 @@ TypeScript は指定した型を破ると即座にエラーを出してくれま
 
 #### 配列
 
-[配列]("https://jsprimer.net/basic/array/")とは、値に順序をつけて格納できるオブジェクトです。 配列に格納したそれぞれの値のことを要素、それぞれの要素の位置のことをインデックス（index）と呼びます。 インデックスは先頭の要素から 0、1、2 のように 0 からはじまる連番となります。配列は、`[]`（リテラルノーテーション）を使って作成することができます。今回の実装の `mockTodoList` が配列です。
+[配列]("https://jsprimer.net/basic/array/")とは、値に順序をつけて格納できるオブジェクトです。 配列に格納したそれぞれの値のことを要素、それぞれの要素の位置のことをインデックス（index）と呼びます。 インデックスは先頭の要素から 0、1、2 のように 0 からはじまる連番となります。配列は、`[]`（ブラケット）を使って作成することができます。今回の実装の `mockTodoList` が配列です。
 
 <span class="code-filename">pages/index.tsx</span>
 
@@ -343,7 +343,7 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
       </td>
       <td></td>
       <td></td>
-  </tr>
+  </tr>,
   <tr key={1}>
       <td></td>
       <td className="py-4 px-6">
@@ -356,7 +356,7 @@ map 関数とは、配列の各要素に対して指定された関数を実行�
       </td>
       <td></td>
       <td></td>
-  </tr>
+  </tr>,
   <tr key={2}>
       <td></td>
       <td className="py-4 px-6">
@@ -647,13 +647,13 @@ const Home: NextPage = () => {
         onChange={handleChangeInput}
         className="border"
       />
-    +  <button
-    +    className="py-2 px-4 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded border-b-4 border-blue-700 hover:border-blue-500"
-    +    disabled={text === ""}
-    +   >
-    +     Todo登録
-    +   </button>
-    + </div>
+   + <button
+   +   className="py-2 px-4 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded border-b-4 border-blue-700 hover:border-blue-500"
+   +    disabled={text === ""}
+   +   >
+   +     Todo登録
+   +   </button>
+   + </div>
    ```
 
 2. 以下のコードを追加してください
@@ -863,10 +863,10 @@ setTodoList([mock0, mock1, mock2, newTodo]);
         </td>
         <td></td>
         <td className="py-4 px-6">
-    +      <button className="py-2 px-4 font-bold text-white bg-red-500 rounded">
-    +        削除
-    +      </button>
-    +    </td>
+   +     <button className="py-2 px-4 font-bold text-white bg-red-500 rounded">
+   +       削除
+   +     </button>
+   +   </td>
       </tr>
     ))}
    ```
@@ -991,13 +991,13 @@ const remove = (id: number) => {
    ```diff
    {todoList.map((todo) => (
       <tr key={todo.id} className="bg-white dark:bg-gray-800 border-b">
-    -    <td></td>
-    +    <td className="py-4 px-6">
-    +      <input
-    +        type="checkbox"
-    +        checked={todo.isDone}
-    +      />
-    +    </td>
+   -    <td></td>
+   +    <td className="py-4 px-6">
+   +      <input
+   +        type="checkbox"
+   +        checked={todo.isDone}
+   +      />
+   +    </td>
         <td className="py-4 px-6">
           <p
             className="w-40"
@@ -1459,7 +1459,7 @@ const Todo = ({ todo, onToggle, onRemove }: TodoProps) => {
 
 このセクションと次のセクションで、既存の Todo を編集する機能を実装します。このセクションでは、既存の Todo を編集モードに切り替えられるようにします。
 
-<video src="https://drive.google.com/uc?id=1hHb3e7kTpuDWcnsx390w-ls2ghkYAFNd" type="video/mp4" autoplay controls loop playsinline  width="600"></video>
+<video src="https://drive.google.com/uc?id=1hHb3e7kTpuDWcnsx390w-ls2ghkYAFNd" type="video/mp4" autoplay controls playsinline  width="600"></video>
 
 ### 実装手順
 
