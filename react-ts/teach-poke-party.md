@@ -49,3 +49,21 @@ React + TypeScript で、ポケモン図鑑を作ります。
 1. [テンプレートリポジトリ](https://github.com/Kosuke2000/nextjs-ts-tailwind-starter) をクローンする
    リポジトリ名は poke-party とします。
 2. VSCode で開き、ローカルホストを立ち上げる
+
+## Member モデルの 型と MEMBER_LIST を用意する
+
+## MEMBER_LIST を表示する
+
+## /[member]ページを作成する
+
+## Link タグを使って/[member]へのページ遷移を実装する
+
+## path を取得する
+
+## navi-poke-api を叩いて、手持ちポケモンの配列を取得する
+
+## PokemonCard コンポーネントの作成
+
+## Pokemon モデルの型の作成
+
+## PokeAPI を叩いて、ポケモンのデータを表示する
